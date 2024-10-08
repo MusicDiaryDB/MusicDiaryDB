@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: admin           # Default user
+      POSTGRES_PASSWORD: admin          # Default password
+      POSTGRES_DB: music_diary_db         # Custom database name
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # To persist data across restarts
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  postgres_data:
