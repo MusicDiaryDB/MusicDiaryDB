@@ -44,6 +44,24 @@
   <section id="report">
     <h2>Diary Report Management</h2>
 
+    <!-- Create Report  -->
+    <form id="create-report-form">
+      <input type="date" name="date" required>
+      <textarea name="description" placeholder="Report Contents"></textarea>
+      <input type="text" name="visibility" placeholder="Visibility" required>
+      <input type="text" name="userId" placeholder="User ID" required>
+      <button type="submit">Create Report</button>
+    </form>
+
+    <!-- Update Report -->
+    <form id="update-report-form">
+      <input type="text" name="reportId" placeholder="Report ID" required>
+      <input type="text" name="title" placeholder="Updated Title">
+      <input type="text" name="visibility" placeholder="Updated Visibility">
+      <textarea name="description" placeholder="Updated Contents"></textarea>
+      <button type="submit">Update Report</button>
+    </form>
+
     <!-- Delete Report -->
     <form id="delete-report-form">
       <input type="text" name="reportId" placeholder="Report ID" required>
@@ -321,8 +339,38 @@
       });
 
       // Diary Report Management
+      const createReportForm = document.getElementById('create-report-form');
+      const updateReportForm = document.getElementById('update-report-form');
       const deleteReportForm = document.getElementById('delete-report-form');
       const reportOutput = document.getElementById('report-output');
+
+      // Create Entry
+      createReportForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(createReportForm);
+        const response = await fetch('/report/', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        const userOutput = document.getElementById('user-output');
+        userOutput.innerHTML = `<p>${result.message}</p><p>ReportID: ${result.reportID}</p>`;
+      });
+
+      updateReportForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(updateReportForm);
+        const reportId = formData.get('reportId');
+        const response = await fetch(`/report/${reportId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+
+        const result = await response.json();
+        const userOutput = document.getElementById('user-output');
+        userOutput.innerHTML = `<p>${result.message}</p>`;
+      });
 
       // Delete Report
       deleteReportForm.addEventListener('submit', async function (e) {

@@ -222,6 +222,61 @@ def delete_diary_entry(entry_id):
 #      DIARY REPORT ROUTES
 # ============================
 
+@app.route('/report/', methods=['POST'])
+def create_diary_report():
+    data = request.form
+    date = data.get('date')
+    description = data.get('description')
+    visibility = data.get('visibility')
+    user_id = data.get('userId')
+
+    if not date or not visibility or not user_id:
+        return jsonify({"error": "Missing fields"}), 400
+
+    existing_entry_query = '''
+        SELECT * FROM "DiaryReport" WHERE "Date" = %s AND "UserID" = %s
+    '''
+    existing_entry = execute_query(
+        existing_entry_query, (date, user_id), fetch_one=True)
+
+    if existing_entry:
+        return jsonify({"error": "Diary report for this date already exists"}), 400
+
+    query = '''
+        INSERT INTO "DiaryReport" ("Date", "Description", "Visibility", "UserID")
+        VALUES (%s, %s, %s, %s) RETURNING "ReportID"
+    '''
+    report_id = execute_query(
+        query, (date, description, visibility, user_id), fetch_one=True)
+
+    if report_id is None:
+        return jsonify({"error": "Diary report creation failed"}), 500
+
+    return jsonify({"message": "Diary report created", "ReportId": report_id}), 201
+
+
+@app.route('/report/<int:report_id>', methods=['PUT'])
+def update_diary_report(report_id):
+    data = request.form
+    description = data.get('description')
+    visibility = data.get('visibility')
+
+    if not visibility:
+        return jsonify({"error": "Missing fields"}), 400
+
+    query = '''
+        UPDATE "DiaryReport"
+        SET "Description" = %s, "Visibility" = %s
+        WHERE "ReportID" = %s
+    '''
+    result = execute_query(query, (description, visibility, report_id))
+
+    if result is None or result == 0:
+        return jsonify({"error": "Diary report not found"}), 404
+
+    return jsonify({"message": "Diary report updated", "ReportID": report_id}), 200
+
+
 # DELETE /report/:reportId - Delete a report
 @app.route('/report/<int:report_id>', methods=['DELETE'])
 def delete_report(report_id):
