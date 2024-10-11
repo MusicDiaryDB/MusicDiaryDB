@@ -178,7 +178,7 @@ def create_diary_entry():
     if entry_id is None:
         return jsonify({"error": "Diary entry creation failed"}), 500
 
-    return jsonify({"message": "Diary entry created", "EntryID": entry_id['EntryID']}), 201
+    return jsonify({"message": "Diary entry created", "EntryID": entry_id}), 201
 
 
 # PUT /entry/<int:entry_id> - Update a diary entry
@@ -210,7 +210,10 @@ def update_diary_entry(entry_id):
 @app.route('/entry/<int:entry_id>', methods=['DELETE'])
 def delete_diary_entry(entry_id):
     query = 'DELETE FROM "DiaryEntry" WHERE "EntryID" = %s'
-    execute_query(query, (entry_id,))
+
+    res = execute_query(query, (entry_id,))
+    if not res:
+        return jsonify({"error": f"Entry {entry_id} not found"}), 404
 
     return jsonify({"message": "Diary entry deleted"}), 200
 
@@ -245,20 +248,54 @@ def create_review(song_id):
     if not contents or not visibility:
         return jsonify({"error": "Missing fields"}), 400
 
+    existing_review_query = 'SELECT * FROM "Review" WHERE "SongID" = %s'
+    existing_user = execute_query(
+        existing_review_query, (song_id,), fetch_one=True)
+
+    if existing_user:
+        return jsonify({"error": "Review for song already exists"}), 400
+
     query = '''
-        INSERT INTO "Review" (Contents, Visibility, "SongID")
+        INSERT INTO "Review" ("Contents", "Visibility", "SongID")
         VALUES (%s, %s, %s) RETURNING "ReviewID"
     '''
     review_id = execute_query(
         query, (contents, visibility, song_id), fetch_one=True)
 
-    return jsonify({"message": "Review created", "ReviewID": review_id['ReviewID']}), 201
+    return jsonify({"message": "Review created", "ReviewID": review_id}), 201
+
+
+@app.route('/review/<int:review_id>', methods=['PUT'])
+def update_review(review_id):
+    data = request.form
+    contents = data.get('contents')  # Get the description
+    visibility = data.get('visibility')  # Get the visibility
+
+    # Validate required fields
+    if not visibility or not contents:
+        return jsonify({"error": "Missing fields"}), 400
+
+    # Update query
+    query = '''
+        UPDATE "Review"
+        SET "Contents" = %s, "Visibility" = %s
+        WHERE "ReviewID" = %s
+    '''
+    result = execute_query(query, (contents, visibility, review_id))
+
+    if result is None or result == 0:
+        return jsonify({"error": "Diary entry not found"}), 404
+
+    return jsonify({"message": "Diary entry updated", "ReviewId": review_id}), 200
 
 
 @app.route('/review/<int:review_id>', methods=['DELETE'])
 def delete_review(review_id):
     query = 'DELETE FROM "Review" WHERE "ReviewID" = %s'
-    execute_query(query, (review_id,))
+    existing_review = execute_query(query, (review_id,))
+
+    if not existing_review:
+        return jsonify({"error": f"Review {review_id} not found"}), 404
 
     return jsonify({"message": "Review deleted"}), 200
 

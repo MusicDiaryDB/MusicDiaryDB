@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Music Diary Management</title>
-  <link rel="stylesheet" href="/static/css/styles.css">
+  <!-- <link rel="stylesheet" href="/static/css/styles.css"> -->
 </head>
 
 <body>
@@ -93,14 +93,16 @@
     <!-- Create Review -->
     <form id="create-review-form">
       <input type="text" name="songId" placeholder="Song ID" required>
-      <textarea name="review" placeholder="Review Content" required></textarea>
+      <input type="text" name="visibility" placeholder="Visibility" required>
+      <textarea name="contents" placeholder="Review Contents" required></textarea>
       <button type="submit">Create Review</button>
     </form>
 
     <!-- Update Review -->
     <form id="update-review-form">
       <input type="text" name="reviewId" placeholder="Review ID" required>
-      <textarea name="review" placeholder="Updated Review Content"></textarea>
+      <input type="text" name="visibility" placeholder="Updated Visibility" required>
+      <textarea name="contents" placeholder="Updated Review Contents"></textarea>
       <button type="submit">Update Review</button>
     </form>
 
@@ -246,6 +248,19 @@
         const result = await response.json();
         reviewOutput.innerHTML = `<p>${result.message}</p><p>ReviewID: ${result.ReviewID}</p>`;
       });
+
+      updateReviewForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(updateReviewForm);
+        const reviewId = formData.get('reviewId');
+        const response = await fetch(`/review/${reviewId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+
+        const result = await response.json();
+        reviewOutput.innerHTML = `<p>${result.message}</p><p>ReviewID: ${result.ReviewID}</p>`;
+      })
 
       // Delete Review
       deleteReviewForm.addEventListener('submit', async function (e) {
