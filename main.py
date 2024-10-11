@@ -247,6 +247,55 @@ def delete_review(review_id):
     return handle_request('Review', 'delete', [], 'ReviewID', review_id)
 
 
+# ============================
+#     USER REVIEWS ROUTES
+# ============================
+
+@app.route('/user_review/', methods=['POST'])
+def create_user_review():
+    return handle_request('UserReviews', 'create', ['userId', 'reviewId'], 'UserID')
+
+
+@app.route('/user_review/<int:user_id>/<int:review_id>', methods=['PUT'])
+def update_user_review(user_id, review_id):
+    data = request.form
+    new_user_id = data.get('new-userId')
+    new_review_id = data.get('new-reviewId')
+    query = '''
+    UPDATE "UserReviews"
+    SET "UserID" = %s, "ReviewID" = %s
+    WHERE "UserID" = %s and "ReviewID" = %s
+    '''
+    try:
+        conn = psycopg2.connect(**db_config)
+        cur = conn.cursor()
+        cur.execute(query, (new_user_id, new_review_id, user_id, review_id))
+        conn.commit()
+        affected_rows = cur.rowcount
+        cur.close()
+        conn.close()
+        if affected_rows > 0:
+            return jsonify({"message": "User review updated successfully!"}), 200
+        else:
+            return jsonify({"error": "No rows updated. Check if the original UserID and ReviewID exist."}), 404
+    except Exception as e:
+        print(f"Error updating UserReview: {str(e)}")
+        return jsonify({"error": "An error occurred while updating the user review."}), 500
+
+
+@app.route('/user_review/<int:user_id>/<int:review_id>', methods=['GET'])
+def get_user_review(user_id, review_id):
+    return handle_request('UserReviews', 'get', [], 'UserID', (user_id, review_id))
+
+
+@app.route('/user_review/<int:user_id>/<int:review_id>', methods=['DELETE'])
+def delete_user_review(user_id, review_id):
+    query = 'DELETE FROM "UserReviews" WHERE "UserID" = %s and "ReviewID" = %s'
+    print(execute_query(query, (user_id, review_id, )))
+    return (jsonify("{}"))
+    # return handle_request('UserReviews', 'delete', [], 'UserID', (user_id, review_id))
+
+
 @app.route('/')
 def index():
     return render_template('index.html')

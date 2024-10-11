@@ -239,6 +239,34 @@
 
       <div id="artist-output"></div>
     </section>
+
+    <section id="user-review-management">
+      <h1>User Reviews</h1>
+
+      <form id="create-user-review-form">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="userId" required>
+        <label for="reviewId">Review ID:</label>
+        <input type="text" id="reviewId" name="reviewId" required>
+        <button type="submit">Link User to Review</button>
+      </form>
+
+      <form id="update-user-review-form">
+        <input type="text" name="userId" placeholder="User ID" required>
+        <input type="text" name="reviewId" placeholder="Review ID" required>
+        <input type="text" name="new-userId" placeholder="Updated User ID" required>
+        <input type="text" name="new-reviewId" placeholder="Updated Review ID" required>
+        <button type="submit">Update User Review</button>
+      </form>
+
+      <form id="delete-user-review-form">
+        <input type="text" name="userId" placeholder="User ID" required>
+        <input type="text" name="reviewId" placeholder="reviewId" required>
+        <button type="submit">Delete User Review</button>
+      </form>
+
+      <div id="user-review-output"></div>
+    </section>
   </section>
 
 
@@ -520,8 +548,70 @@
         const result = await response.json();
         reviewOutput.innerHTML = `<p>${result.message}</p>`;
       });
+
+      // Create User Review Management
+      const createUserReviewForm = document.getElementById('create-user-review-form');
+      const createUserReviewOutput = document.getElementById('user-review-output');
+
+      createUserReviewForm.addEventListener('submit', async function (e) {
+        e.preventDefault(); // Prevent the default form submission behavior
+        const formData = new FormData(createUserReviewForm);
+        console.log(formData)
+
+        const response = await fetch('/user_review/', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        createUserReviewOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+
+      // Update User Review Management
+      const updateUserReviewForm = document.getElementById('update-user-review-form');
+      const updateUserReviewOutput = document.getElementById('user-review-output');
+
+      updateUserReviewForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(updateUserReviewForm);
+        const userId = formData.get('userId');
+        const reviewId = formData.get('reviewId');
+
+        try {
+          const response = await fetch(`/user_review/${userId}/${reviewId}`, {
+            method: 'PUT',
+            body: formData,
+          });
+
+          const result = await response.json();
+          updateUserReviewOutput.innerHTML = `<p>${result.message}</p>`;
+        } catch (error) {
+          updateUserReviewOutput.innerHTML = `<p>Error: ${error.message}</p>`;
+        }
+      });
+
+      // Delete User Review Management
+      const deleteUserReviewForm = document.getElementById('delete-user-review-form');
+      const deleteUserReviewOutput = document.getElementById('user-review-output');
+
+      deleteUserReviewForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(deleteUserReviewForm);
+        const userId = formData.get('userId');
+        const reviewId = formData.get('reviewId');
+
+        try {
+          const response = await fetch(`/user_review/${userId}/${reviewId}`, {
+            method: 'DELETE',
+          });
+
+          const result = await response.json();
+          deleteUserReviewOutput.innerHTML = `<p>${result.message}</p>`;
+        } catch (error) {
+          deleteUserReviewOutput.innerHTML = `<p>Error: ${error.message}</p>`;
+        }
+      });
     });
-  </script>
   </script>
 </body>
 
