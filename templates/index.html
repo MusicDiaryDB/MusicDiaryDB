@@ -244,6 +244,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      // User Management
       const createUserForm = document.getElementById('create-user-form');
       const updateUserForm = document.getElementById('update-user-form');
       const deleteUserForm = document.getElementById('delete-user-form');
@@ -289,103 +290,191 @@
         userOutput.innerHTML = `<p>${result.message}</p>`;
       });
 
-      // Diary Entry Management
-      const createEntryForm = document.getElementById('create-entry-form');
-      const updateEntryForm = document.getElementById('update-entry-form');
-      const deleteEntryForm = document.getElementById('delete-entry-form');
-      const entryOutput = document.getElementById('entry-output');
+      // Song Management
+      const createSongForm = document.getElementById('create-song-form');
+      const updateSongForm = document.getElementById('update-song-form');
+      const deleteSongForm = document.getElementById('delete-song-form');
+      const songOutput = document.getElementById('song-output');
 
-      // Create Entry
-      createEntryForm.addEventListener('submit', async function (e) {
+      // Create Song
+      createSongForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const formData = new FormData(createEntryForm);
-        const response = await fetch('/entry/', {
+        const formData = new FormData(createSongForm);
+        const response = await fetch('/song/', {
           method: 'POST',
           body: formData,
         });
 
         const result = await response.json();
-        const userOutput = document.getElementById('user-output');
-        userOutput.innerHTML = `<p>${result.message}</p><p>EntryID: ${result.EntryID}</p>`;
+        songOutput.innerHTML = `<p>${result.message}</p><p>SongID: ${result.SongID}</p>`;
       });
 
-      updateEntryForm.addEventListener('submit', async function (e) {
+      // Update Song
+      updateSongForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-
-        const formData = new FormData(this);
-        const entryId = formData.get('entryId');
-
-        const response = await fetch(`/entry/${entryId}`, {
+        const formData = new FormData(updateSongForm);
+        const songId = formData.get('songId');
+        const response = await fetch(`/song/${songId}`, {
           method: 'PUT',
           body: formData,
         });
 
         const result = await response.json();
-        const userOutput = document.getElementById('user-output');
-        userOutput.innerHTML = `<p>${result.message}</p>`;
+        songOutput.innerHTML = `<p>${result.message}</p>`;
       });
 
-      // Delete Diary Entry
-      deleteEntryForm.addEventListener('submit', async function (e) {
+      // Delete Song
+      deleteSongForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const formData = new FormData(deleteEntryForm);
-        const entryId = formData.get('entryId');
-        const response = await fetch(`/entry/${entryId}`, {
+        const formData = new FormData(deleteSongForm);
+        const songId = formData.get('songId');
+        const response = await fetch(`/song/${songId}`, {
           method: 'DELETE',
         });
 
         const result = await response.json();
-        entryOutput.innerHTML = `<p>${result.message}</p>`;
+        songOutput.innerHTML = `<p>${result.message}</p>`;
       });
 
-      // Diary Report Management
-      const createReportForm = document.getElementById('create-report-form');
-      const updateReportForm = document.getElementById('update-report-form');
-      const deleteReportForm = document.getElementById('delete-report-form');
-      const reportOutput = document.getElementById('report-output');
+      // Streaming Platform Management
+      const createPlatformForm = document.getElementById('create-platform-form');
+      const updatePlatformForm = document.getElementById('update-platform-form');
+      const deletePlatformForm = document.getElementById('delete-platform-form');
+      const platformOutput = document.getElementById('platform-output');
 
-      // Create Entry
-      createReportForm.addEventListener('submit', async function (e) {
+      // Create Streaming Platform
+      createPlatformForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const formData = new FormData(createReportForm);
-        const response = await fetch('/report/', {
+        const formData = new FormData(createPlatformForm);
+        const response = await fetch('/platform/', {
           method: 'POST',
           body: formData,
         });
 
         const result = await response.json();
-        const userOutput = document.getElementById('user-output');
-        userOutput.innerHTML = `<p>${result.message}</p><p>ReportID: ${result.reportID}</p>`;
+        platformOutput.innerHTML = `<p>${result.message}</p><p>PlatformID: ${result.PlatformID}</p>`;
       });
 
-      updateReportForm.addEventListener('submit', async function (e) {
+      // Update Streaming Platform
+      updatePlatformForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const formData = new FormData(updateReportForm);
-        const reportId = formData.get('reportId');
-        const response = await fetch(`/report/${reportId}`, {
+        const formData = new FormData(updatePlatformForm);
+        const platformId = formData.get('platformId');
+        const response = await fetch(`/platform/${platformId}`, {
           method: 'PUT',
           body: formData,
         });
 
         const result = await response.json();
-        const userOutput = document.getElementById('user-output');
-        userOutput.innerHTML = `<p>${result.message}</p>`;
+        platformOutput.innerHTML = `<p>${result.message}</p>`;
       });
 
-      // Delete Report
-      deleteReportForm.addEventListener('submit', async function (e) {
+      // Delete Streaming Platform
+      deletePlatformForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const formData = new FormData(deleteReportForm);
-        const reportId = formData.get('reportId');
-        const response = await fetch(`/report/${reportId}`, {
+        const formData = new FormData(deletePlatformForm);
+        const platformId = formData.get('platformId');
+        const response = await fetch(`/platform/${platformId}`, {
           method: 'DELETE',
         });
 
         const result = await response.json();
-        reportOutput.innerHTML = `<p>${result.message}</p>`;
+        platformOutput.innerHTML = `<p>${result.message}</p>`;
       });
 
-      // User Review Management
+      // Album Management
+      const createAlbumForm = document.getElementById('create-album-form');
+      const updateAlbumForm = document.getElementById('update-album-form');
+      const deleteAlbumForm = document.getElementById('delete-album-form');
+      const albumOutput = document.getElementById('album-output');
+
+      // Create Album
+      createAlbumForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(createAlbumForm);
+        const response = await fetch('/album/', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        albumOutput.innerHTML = `<p>${result.message}</p><p>AlbumID: ${result.AlbumID}</p>`;
+      });
+
+      // Update Album
+      updateAlbumForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(updateAlbumForm);
+        const albumId = formData.get('albumId');
+        const response = await fetch(`/album/${albumId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+
+        const result = await response.json();
+        albumOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+
+      // Delete Album
+      deleteAlbumForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(deleteAlbumForm);
+        const albumId = formData.get('albumId');
+        const response = await fetch(`/album/${albumId}`, {
+          method: 'DELETE',
+        });
+
+        const result = await response.json();
+        albumOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+
+      // Artist Management
+      const createArtistForm = document.getElementById('create-artist-form');
+      const updateArtistForm = document.getElementById('update-artist-form');
+      const deleteArtistForm = document.getElementById('delete-artist-form');
+      const artistOutput = document.getElementById('artist-output');
+
+      // Create Artist
+      createArtistForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(createArtistForm);
+        const response = await fetch('/artist/', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        artistOutput.innerHTML = `<p>${result.message}</p><p>ArtistID: ${result.ArtistID}</p>`;
+      });
+
+      // Update Artist
+      updateArtistForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(updateArtistForm);
+        const artistId = formData.get('artistId');
+        const response = await fetch(`/artist/${artistId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+
+        const result = await response.json();
+        artistOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+
+      // Delete Artist
+      deleteArtistForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(deleteArtistForm);
+        const artistId = formData.get('artistId');
+        const response = await fetch(`/artist/${artistId}`, {
+          method: 'DELETE',
+        });
+
+        const result = await response.json();
+        artistOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+
+      // User Review Management (already present)
       const createReviewForm = document.getElementById('create-review-form');
       const updateReviewForm = document.getElementById('update-review-form');
       const deleteReviewForm = document.getElementById('delete-review-form');
@@ -405,6 +494,7 @@
         reviewOutput.innerHTML = `<p>${result.message}</p><p>ReviewID: ${result.ReviewID}</p>`;
       });
 
+      // Update Review
       updateReviewForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         const formData = new FormData(updateReviewForm);
@@ -416,7 +506,7 @@
 
         const result = await response.json();
         reviewOutput.innerHTML = `<p>${result.message}</p><p>ReviewID: ${result.ReviewID}</p>`;
-      })
+      });
 
       // Delete Review
       deleteReviewForm.addEventListener('submit', async function (e) {
@@ -430,9 +520,8 @@
         const result = await response.json();
         reviewOutput.innerHTML = `<p>${result.message}</p>`;
       });
-
-      // TODO: handlers for song, album, artist, streaming platform
     });
+  </script>
   </script>
 </body>
 
