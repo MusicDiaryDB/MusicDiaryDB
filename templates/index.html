@@ -114,7 +114,115 @@
 
     <!-- Output for review operations -->
     <div id="review-output"></div>
+    <h1>Music Management</h1>
+
+    <!-- Song Management -->
+    <section id="song-management">
+      <h2>Song Management</h2>
+
+      <!-- Create Song -->
+      <form id="create-song-form">
+        <input type="date" name="releaseDate" placeholder="Release Date" required>
+        <input type="text" name="name" placeholder="Song Name" required>
+        <button type="submit">Create Song</button>
+      </form>
+
+      <!-- Update Song -->
+      <form id="update-song-form">
+        <input type="text" name="songId" placeholder="Song ID" required>
+        <input type="date" name="releaseDate" placeholder="Updated Release Date" required>
+        <input type="text" name="name" placeholder="Updated Song Name" required>
+        <button type="submit">Update Song</button>
+      </form>
+
+      <!-- Delete Song -->
+      <form id="delete-song-form">
+        <input type="text" name="songId" placeholder="Song ID" required>
+        <button type="submit">Delete Song</button>
+      </form>
+
+      <div id="song-output"></div>
+    </section>
+
+    <!-- Streaming Platform Management -->
+    <section id="streaming-platform-management">
+      <h2>Streaming Platform Management</h2>
+
+      <!-- Create Streaming Platform -->
+      <form id="create-platform-form">
+        <input type="text" name="name" placeholder="Platform Name" required>
+        <button type="submit">Create Streaming Platform</button>
+      </form>
+
+      <!-- Update Streaming Platform -->
+      <form id="update-platform-form">
+        <input type="text" name="platformId" placeholder="Platform ID" required>
+        <input type="text" name="name" placeholder="Updated Platform Name" required>
+        <button type="submit">Update Streaming Platform</button>
+      </form>
+
+      <!-- Delete Streaming Platform -->
+      <form id="delete-platform-form">
+        <input type="text" name="platformId" placeholder="Platform ID" required>
+        <button type="submit">Delete Streaming Platform</button>
+      </form>
+
+      <div id="platform-output"></div>
+    </section>
+
+    <!-- Album Management -->
+    <section id="album-management">
+      <h2>Album Management</h2>
+
+      <!-- Create Album -->
+      <form id="create-album-form">
+        <input type="text" name="name" placeholder="Album Name" required>
+        <button type="submit">Create Album</button>
+      </form>
+
+      <!-- Update Album -->
+      <form id="update-album-form">
+        <input type="text" name="albumId" placeholder="Album ID" required>
+        <input type="text" name="name" placeholder="Updated Album Name" required>
+        <button type="submit">Update Album</button>
+      </form>
+
+      <!-- Delete Album -->
+      <form id="delete-album-form">
+        <input type="text" name="albumId" placeholder="Album ID" required>
+        <button type="submit">Delete Album</button>
+      </form>
+
+      <div id="album-output"></div>
+    </section>
+
+    <!-- Artist Management -->
+    <section id="artist-management">
+      <h2>Artist Management</h2>
+
+      <!-- Create Artist -->
+      <form id="create-artist-form">
+        <input type="text" name="name" placeholder="Artist Name" required>
+        <button type="submit">Create Artist</button>
+      </form>
+
+      <!-- Update Artist -->
+      <form id="update-artist-form">
+        <input type="text" name="artistId" placeholder="Artist ID" required>
+        <input type="text" name="name" placeholder="Updated Artist Name" required>
+        <button type="submit">Update Artist</button>
+      </form>
+
+      <!-- Delete Artist -->
+      <form id="delete-artist-form">
+        <input type="text" name="artistId" placeholder="Artist ID" required>
+        <button type="submit">Delete Artist</button>
+      </form>
+
+      <div id="artist-output"></div>
+    </section>
   </section>
+
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -274,6 +382,8 @@
         const result = await response.json();
         reviewOutput.innerHTML = `<p>${result.message}</p>`;
       });
+
+      // TODO: handlers for song, album, artist, streaming platform
     });
   </script>
 </body>
