@@ -16,6 +16,7 @@
           python312Packages.pandas
           python312Packages.psycopg2
           python312Packages.faker
+          python312Packages.flask
         ];
 
         shellHook = ''

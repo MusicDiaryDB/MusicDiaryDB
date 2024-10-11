@@ -1,5 +1,4 @@
 import psycopg2
-# from psycopg2 import sql
 
 db_config = {
     'dbname': 'music_diary_db',

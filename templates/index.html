@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Diary Management</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+
+<body>
+  <h1>Music Diary Management</h1>
+
+  <!-- User Operations -->
+  <section id="user">
+    <h2>User Management</h2>
+
+    <!-- Create User -->
+    <form id="create-user-form">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="text" name="visibility" placeholder="Visibility" required>
+      <button type="submit">Create User</button>
+    </form>
+
+    <!-- Update User -->
+    <form id="update-user-form">
+      <input type="text" name="userId" placeholder="User ID" required>
+      <input type="text" name="username" placeholder="Updated Username">
+      <input type="text" name="visibility" placeholder="Updated Visibility" required>
+      <button type="submit">Update User</button>
+    </form>
+
+    <!-- Delete User -->
+    <form id="delete-user-form">
+      <input type="text" name="userId" placeholder="User ID" required>
+      <button type="submit">Delete User</button>
+    </form>
+
+    <!-- Output for user operations -->
+    <div id="user-output"></div>
+  </section>
+
+  <!-- Diary Report Operations -->
+  <section id="report">
+    <h2>Diary Report Management</h2>
+
+    <!-- Delete Report -->
+    <form id="delete-report-form">
+      <input type="text" name="reportId" placeholder="Report ID" required>
+      <button type="submit">Delete Report</button>
+    </form>
+
+    <!-- Output for report operations -->
+    <div id="report-output"></div>
+  </section>
+
+  <!-- Diary Entry Operations -->
+  <section id="entry">
+    <h2>Diary Entry Management</h2>
+
+    <!-- Create Entry  -->
+    <form id="create-entry-form">
+      <input type="date" name="date" required>
+      <textarea name="description" placeholder="Entry Description"></textarea>
+      <input type="text" name="visibility" placeholder="Visibility" required>
+      <input type="text" name="userId" placeholder="User ID" required>
+      <button type="submit">Create Entry</button>
+    </form>
+
+    <!-- Update Entry -->
+    <form id="update-entry-form">
+      <input type="text" name="entryId" placeholder="Entry ID" required>
+      <input type="text" name="title" placeholder="Updated Title">
+      <input type="text" name="visibility" placeholder="Updated Visibility">
+      <textarea name="description" placeholder="Updated Description"></textarea>
+      <button type="submit">Update Entry</button>
+    </form>
+
+    <!-- Delete Entry -->
+    <form id="delete-entry-form">
+      <input type="text" name="entryId" placeholder="Entry ID" required>
+      <button type="submit">Delete Entry</button>
+    </form>
+
+    <!-- Output for entry operations -->
+    <div id="entry-output"></div>
+  </section>
+
+  <!-- User Review Operations -->
+  <section id="review">
+    <h2>User Review Management</h2>
+
+    <!-- Create Review -->
+    <form id="create-review-form">
+      <input type="text" name="songId" placeholder="Song ID" required>
+      <textarea name="review" placeholder="Review Content" required></textarea>
+      <button type="submit">Create Review</button>
+    </form>
+
+    <!-- Update Review -->
+    <form id="update-review-form">
+      <input type="text" name="reviewId" placeholder="Review ID" required>
+      <textarea name="review" placeholder="Updated Review Content"></textarea>
+      <button type="submit">Update Review</button>
+    </form>
+
+    <!-- Delete Review -->
+    <form id="delete-review-form">
+      <input type="text" name="reviewId" placeholder="Review ID" required>
+      <button type="submit">Delete Review</button>
+    </form>
+
+    <!-- Output for review operations -->
+    <div id="review-output"></div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const createUserForm = document.getElementById('create-user-form');
+      const updateUserForm = document.getElementById('update-user-form');
+      const deleteUserForm = document.getElementById('delete-user-form');
+      const userOutput = document.getElementById('user-output');
+
+      // Create User
+      createUserForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(createUserForm);
+        const response = await fetch('/user/', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        userOutput.innerHTML = `<p>${result.message}</p><p>UserID: ${result.UserID}</p>`;
+      });
+
+      // Update User
+      updateUserForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(updateUserForm);
+        const userId = formData.get('userId');
+        const response = await fetch(`/user/${userId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+
+        const result = await response.json();
+        userOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+
+      // Delete User
+      deleteUserForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(deleteUserForm);
+        const userId = formData.get('userId');
+        const response = await fetch(`/user/${userId}`, {
+          method: 'DELETE',
+        });
+
+        const result = await response.json();
+        userOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+
+      // Diary Entry Management
+      const createEntryForm = document.getElementById('create-entry-form');
+      const updateEntryForm = document.getElementById('update-entry-form');
+      const deleteEntryForm = document.getElementById('delete-entry-form');
+      const entryOutput = document.getElementById('entry-output');
+
+      // Create Entry
+      createEntryForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(createEntryForm);
+        const response = await fetch('/entry/', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        const userOutput = document.getElementById('user-output');
+        userOutput.innerHTML = `<p>${result.message}</p><p>EntryID: ${result.EntryID}</p>`;
+      });
+
+      updateEntryForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const entryId = formData.get('entryId');
+
+        const response = await fetch(`/entry/${entryId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+
+        const result = await response.json();
+        const userOutput = document.getElementById('user-output');
+        userOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+
+      // Delete Diary Entry
+      deleteEntryForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(deleteEntryForm);
+        const entryId = formData.get('entryId');
+        const response = await fetch(`/entry/${entryId}`, {
+          method: 'DELETE',
+        });
+
+        const result = await response.json();
+        entryOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+
+      // Diary Report Management
+      const deleteReportForm = document.getElementById('delete-report-form');
+      const reportOutput = document.getElementById('report-output');
+
+      // Delete Report
+      deleteReportForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(deleteReportForm);
+        const reportId = formData.get('reportId');
+        const response = await fetch(`/report/${reportId}`, {
+          method: 'DELETE',
+        });
+
+        const result = await response.json();
+        reportOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+
+      // User Review Management
+      const createReviewForm = document.getElementById('create-review-form');
+      const updateReviewForm = document.getElementById('update-review-form');
+      const deleteReviewForm = document.getElementById('delete-review-form');
+      const reviewOutput = document.getElementById('review-output');
+
+      // Create Review
+      createReviewForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(createReviewForm);
+        const songId = formData.get('songId');
+        const response = await fetch(`/review/${songId}`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        reviewOutput.innerHTML = `<p>${result.message}</p><p>ReviewID: ${result.ReviewID}</p>`;
+      });
+
+      // Delete Review
+      deleteReviewForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(deleteReviewForm);
+        const reviewId = formData.get('reviewId');
+        const response = await fetch(`/review/${reviewId}`, {
+          method: 'DELETE',
+        });
+
+        const result = await response.json();
+        reviewOutput.innerHTML = `<p>${result.message}</p>`;
+      });
+    });
+  </script>
+</body>
+
+</html>
