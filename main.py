@@ -61,8 +61,8 @@ def create_resource(table, params, primary_key):
     else:
         print("Failed to get max id result")
 
-    # TODO: add handling of intermediary tables where max_id doesn't matter.
-    # the seq name causes error if you try to run it in that case
+    # TODO: add better handling of intermediary tables where max_id doesn't matter.
+    # the seq name is none if you try to run it in that case
 
     table_quoted = f'"{table}"'
     seq_name_query = f"SELECT pg_get_serial_sequence('{table_quoted}', '{primary_key}')"
@@ -84,9 +84,9 @@ def create_resource(table, params, primary_key):
     )
     values = ", ".join(["%s" for _ in params.keys()])
 
-    insert_query = (
-        f'INSERT INTO "{table}" ({keys}) VALUES ({values}) RETURNING "{primary_key}"'
-    )
+    insert_query = f'INSERT INTO "{table}" ({keys}) VALUES ({values})'
+    # NOTE: commented out to avoid issues with multi-key tables (also didn't really work anyway)
+    # f'INSERT INTO "{table}" ({keys}) VALUES ({values}) RETURNING "{primary_key}"'
     print(insert_query)
 
     return execute_query(insert_query, tuple(params.values()), fetch_one=True)
@@ -113,9 +113,57 @@ def get_resource(table, identifier, primary_key):
     return execute_query(query, (identifier,), fetch_one=True)
 
 
+def format_param_key(key):
+    if key.startswith("new-"):
+        return "new-" + key[4].upper() + key[5:].replace("Id", "ID")
+    return key[0].upper() + key[1:].replace("Id", "ID")
+
+
+def update_resource_with_multiple_keys(table, data, primary_keys, identifier):
+    params = {key: data.get(key) for key in data.keys()}
+    formatted_params = {format_param_key(key): value for key, value in params.items()}
+    set_clause = ", ".join(
+        [
+            f'"{format_param_key(key[4:])}" = %s'
+            for key in params.keys()
+            if key.startswith("new-")
+        ]
+    )
+    where_clause = " AND ".join([f'"{key}" = %s' for key in primary_keys])
+    query = f"""
+    UPDATE "{table}"
+    SET {set_clause}
+    WHERE {where_clause}
+    """
+    print(query)
+    set_values = tuple(formatted_params[f"new-{key}"] for key in primary_keys)
+    where_values = identifier
+    values = set_values + where_values
+    print(values)
+    result = execute_query(query, values)
+    if result is None or result == 0:
+        return jsonify({"error": f"{table} update failed"}), 404
+    return jsonify({"message": f"{table} updated successfully!"}), 200
+
+
+def delete_resource_with_multiple_keys(table, primary_keys, identifier):
+    where_clause = " AND ".join([f'"{key}" = %s' for key in primary_keys])
+    query = f"""
+    DELETE FROM "{table}"
+    WHERE {where_clause}
+    """
+    print(query)
+    values = identifier
+    print(values)
+    result = execute_query(query, values)
+    if result is None or result == 0:
+        return jsonify({"error": f"{table} deletion failed"}), 404
+    return jsonify({"message": f"{table} deleted successfully!"}), 200
+
+
 def handle_request(table, operation, required_fields, primary_key, identifier=None):
     print(
-        f"Request recieved: {table}, {operation}, {required_fields}, {primary_key}, {identifier}"
+        f"Request received: {table}, {operation}, {required_fields}, {primary_key}, {identifier}"
     )
 
     data = request.form
@@ -133,13 +181,21 @@ def handle_request(table, operation, required_fields, primary_key, identifier=No
         ), 201
 
     elif operation.lower() == "update":
-        result = update_resource(table, params, identifier, primary_key)
+        if isinstance(identifier, tuple):
+            result = None
+            print("don't use handle_request for multiple key deletes/updates")
+        else:
+            result = update_resource(table, params, identifier, primary_key)
         if result is None or result == 0:
             return jsonify({"error": f"{table} update failed"}), 404
         return jsonify({"message": f"{table} updated"}), 200
 
     elif operation.lower() == "delete":
-        result = delete_resource(table, identifier, primary_key)
+        if isinstance(identifier, tuple):
+            result = None
+            print("don't use handle_request for multiple key deletes/updates")
+        else:
+            result = delete_resource(table, identifier, primary_key)
         if result is None or result == 0:
             return jsonify({"error": f"{table} not found"}), 404
         return jsonify({"message": f"{table} deleted"}), 200
@@ -375,38 +431,9 @@ def create_user_review() -> Any:
 
 @app.route("/user_review/<int:user_id>/<int:review_id>", methods=["PUT"])
 def update_user_review(user_id, review_id) -> Any:
-    data = request.form
-    new_user_id = data.get("new-userId")
-    new_review_id = data.get("new-reviewId")
-    query = """
-    UPDATE "UserReviews"
-    SET "UserID" = %s, "ReviewID" = %s
-    WHERE "UserID" = %s and "ReviewID" = %s
-    """
-    conn = create_connection()
-    if conn is None:
-        print("Failed to connect to database")
-        return
-    try:
-        cur = conn.cursor()
-        cur.execute(query, (new_user_id, new_review_id, user_id, review_id))
-        conn.commit()
-        affected_rows = cur.rowcount
-        cur.close()
-        conn.close()
-        if affected_rows > 0:
-            return jsonify({"message": "User review updated successfully!"}), 200
-        else:
-            return jsonify(
-                {
-                    "error": "No rows updated. Check if the original UserID and ReviewID exist."
-                }
-            ), 404
-    except Exception as e:
-        print(f"Error updating UserReview: {str(e)}")
-        return jsonify(
-            {"error": "An error occurred while updating the user review."}
-        ), 500
+    return update_resource_with_multiple_keys(
+        "UserReviews", request.form, ["UserID", "ReviewID"], (user_id, review_id)
+    )
 
 
 @app.route("/user_review/<int:user_id>/<int:review_id>", methods=["GET"])
@@ -416,18 +443,36 @@ def get_user_review(user_id, review_id) -> Any:
 
 @app.route("/user_review/<int:user_id>/<int:review_id>", methods=["DELETE"])
 def delete_user_review(user_id, review_id) -> Any:
-    query = 'DELETE FROM "UserReviews" WHERE "UserID" = %s and "ReviewID" = %s'
-    print(
-        execute_query(
-            query,
-            (
-                user_id,
-                review_id,
-            ),
-        )
+    return delete_resource_with_multiple_keys(
+        "UserReviews", ["UserID", "ReviewID"], (user_id, review_id)
     )
-    return jsonify("{}")
-    # return handle_request('UserReviews', 'delete', [], 'UserID', (user_id, review_id))
+
+
+# ============================
+#     ARTIST ALBUM ROUTES
+# ============================
+
+
+@app.route("/artist_album/", methods=["POST"])
+def create_artist_album() -> Any:
+    return handle_request("ArtistAlbums", "create", ["artistId", "albumId"], None)
+
+
+@app.route("/artist_album/<int:artist_id>/<int:album_id>", methods=["PUT"])
+def update_artist_album(artist_id, album_id) -> Any:
+    return update_resource_with_multiple_keys(
+        "ArtistAlbums",
+        request.form,
+        ["ArtistID", "AlbumID"],
+        (artist_id, album_id),
+    )
+
+
+@app.route("/artist_album/<int:artist_id>/<int:album_id>", methods=["DELETE"])
+def delete_artist_album(artist_id, album_id) -> Any:
+    return delete_resource_with_multiple_keys(
+        "ArtistAlbums", ["ArtistID", "AlbumID"], (artist_id, album_id)
+    )
 
 
 @app.route("/")

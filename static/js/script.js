@@ -429,4 +429,82 @@ document.addEventListener("DOMContentLoaded", function () {
       deleteUserReviewOutput.innerHTML = `<p>Error: ${error.message}</p>`;
     }
   });
+
+  // Create Artist Album Management
+  const createArtistAlbumForm = document.getElementById(
+    "create-artist-album-form",
+  );
+  const createArtistAlbumOutput = document.getElementById(
+    "artist-album-output",
+  );
+
+  createArtistAlbumForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const formData = new FormData(createArtistAlbumForm);
+
+    try {
+      const response = await fetch("/artist_album/", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      createArtistAlbumOutput.innerHTML = `<p>${result.message}</p>`;
+    } catch (error) {
+      createArtistAlbumOutput.innerHTML = `<p>Error: ${error.message}</p>`;
+    }
+  });
+
+  // Update Artist Album Management
+  const updateArtistAlbumForm = document.getElementById(
+    "update-artist-album-form",
+  );
+  const updateArtistAlbumOutput = document.getElementById(
+    "artist-album-output",
+  );
+
+  updateArtistAlbumForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const formData = new FormData(updateArtistAlbumForm);
+    const artistId = formData.get("artistId");
+    const albumId = formData.get("albumId");
+
+    try {
+      const response = await fetch(`/artist_album/${artistId}/${albumId}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      const result = await response.json();
+      updateArtistAlbumOutput.innerHTML = `<p>${result.message}</p>`;
+    } catch (error) {
+      updateArtistAlbumOutput.innerHTML = `<p>Error: ${error.message}</p>`;
+    }
+  });
+
+  // Delete Artist Album Management
+  const deleteArtistAlbumForm = document.getElementById(
+    "delete-artist-album-form",
+  );
+  const deleteArtistAlbumOutput = document.getElementById(
+    "artist-album-output",
+  );
+
+  deleteArtistAlbumForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const formData = new FormData(deleteArtistAlbumForm);
+    const artistId = formData.get("artistId");
+    const albumId = formData.get("albumId");
+
+    try {
+      const response = await fetch(`/artist_album/${artistId}/${albumId}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+      deleteArtistAlbumOutput.innerHTML = `<p>${result.message}</p>`;
+    } catch (error) {
+      deleteArtistAlbumOutput.innerHTML = `<p>Error: ${error.message}</p>`;
+    }
+  });
 });
