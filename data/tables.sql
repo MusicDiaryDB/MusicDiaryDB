@@ -7,7 +7,9 @@ CREATE TABLE "User" (
 CREATE TABLE "Song" (
   "SongID" SERIAL PRIMARY KEY,
   "ReleaseDate" DATE NOT NULL,
-  "Name" VARCHAR NOT NULL
+  "Name" VARCHAR NOT NULL,
+  "AlbumID" INT,
+  FOREIGN KEY ("AlbumID") REFERENCES "Album" ("AlbumID") ON DELETE CASCADE
 );
 
 CREATE TABLE "Artist" (
@@ -37,7 +39,9 @@ CREATE TABLE "DiaryEntry" (
   "Description" TEXT,
   "Visibility" VARCHAR NOT NULL,
   "UserID" INT NOT NULL,
-  FOREIGN KEY ("UserID") REFERENCES "User" ("UserID") ON DELETE CASCADE
+  "SongID" INT NOT NULL,
+  FOREIGN KEY ("UserID") REFERENCES "User" ("UserID") ON DELETE CASCADE,
+  FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE
 );
 
 CREATE TABLE "DiaryReport" (
@@ -45,7 +49,7 @@ CREATE TABLE "DiaryReport" (
   "Date" DATE NOT NULL,
   "Visibility" VARCHAR NOT NULL,
   "Description" TEXT,
-  "UserID" INT,
+  "UserID" INT NOT NULL,
   FOREIGN KEY ("UserID") REFERENCES "User" ("UserID") ON DELETE CASCADE
 );
 
@@ -83,38 +87,6 @@ CREATE TABLE "UserFriends" (
 
 -- user activity
 
-CREATE TABLE "UserDiaryEntries" (
-  "UserID" INT NOT NULL,
-  "EntryID" INT NOT NULL,
-  PRIMARY KEY ("UserID", "EntryID")
-  FOREIGN KEY ("UserID") REFERENCES "User" ("UserID") ON DELETE CASCADE,
-  FOREIGN KEY ("EntryID") REFERENCES "DiaryEntry" ("EntryID") ON DELETE CASCADE
-);
-
-CREATE TABLE "UserDiaryReports" (
-  "UserID" int NOT NULL,
-  "ReportID" int NOT NULL,
-  PRIMARY KEY ("UserID", "ReportID"),
-  FOREIGN KEY ("UserID") REFERENCES "User" ("UserID") ON DELETE CASCADE,
-  FOREIGN KEY ("ReportID") REFERENCES "DiaryReport" ("ReportID") ON DELETE CASCADE
-);
-
-CREATE TABLE "UserReviews" (
-  "UserID" int NOT NULL,
-  "ReviewID" int NOT NULL,
-  PRIMARY KEY ("UserID", "ReviewID")
-  FOREIGN KEY ("UserID") REFERENCES "User" ("UserID") ON DELETE CASCADE,
-  FOREIGN KEY ("ReviewID") REFERENCES "Review" ("ReviewID") ON DELETE CASCADE
-);
-
-CREATE TABLE "DiaryEntrySongs" (
-  "EntryID" INT NOT NULL,
-  "SongID" INT NOT NULL,
-  PRIMARY KEY ("EntryID", "SongID"),
-  FOREIGN KEY ("EntryID") REFERENCES "DiaryEntry" ("EntryID") ON DELETE CASCADE,
-  FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE
-);
-
 CREATE TABLE "StreamingPlatformSongs" (
   "StreamingPlatformID" INT NOT NULL,
   "SongID" INT NOT NULL,
@@ -123,21 +95,7 @@ CREATE TABLE "StreamingPlatformSongs" (
   FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE
 );
 
-CREATE TABLE "AlbumSongs" (
-  "SongID" int NOT NULL,
-  "AlbumID" int NOT NULL,
-  PRIMARY KEY ("SongID", "AlbumID")
-  FOREIGN KEY ("AlbumID") REFERENCES "Album" ("AlbumID") ON DELETE CASCADE,
-  FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE
-);
 
-CREATE TABLE "ArtistAlbums" (
-  "ArtistID" int NOT NULL,
-  "AlbumID" int NOT NULL,
-  PRIMARY KEY ("ArtistID", "AlbumID")
-  FOREIGN KEY ("ArtistID") REFERENCES "Artist" ("ArtistID") ON DELETE CASCADE,
-  FOREIGN KEY ("AlbumID") REFERENCES "Album" ("AlbumID") ON DELETE CASCADE
-);
 
 -- Add foreign key constraints with ON DELETE CASCADE
 
@@ -155,24 +113,6 @@ ALTER TABLE "UserFriends" ADD FOREIGN KEY ("UserID") REFERENCES "User" ("UserID"
 
 ALTER TABLE "UserFriends" ADD FOREIGN KEY ("FriendUserID") REFERENCES "User" ("UserID") ON DELETE CASCADE;
 
-ALTER TABLE "UserDiaryEntries" ADD FOREIGN KEY ("EntryID") REFERENCES "DiaryEntry" ("EntryID") ON DELETE CASCADE;
-
-ALTER TABLE "UserDiaryReports" ADD FOREIGN KEY ("ReportID") REFERENCES "DiaryReport" ("ReportID") ON DELETE CASCADE;
-
-ALTER TABLE "UserReviews" ADD FOREIGN KEY ("ReviewID") REFERENCES "Review" ("ReviewID") ON DELETE CASCADE;
-
-ALTER TABLE "DiaryEntrySongs" ADD FOREIGN KEY ("EntryID") REFERENCES "DiaryEntry" ("EntryID") ON DELETE CASCADE;
-
-ALTER TABLE "DiaryEntrySongs" ADD FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE;
-
 ALTER TABLE "StreamingPlatformSongs" ADD FOREIGN KEY ("StreamingPlatformID") REFERENCES "StreamingPlatform" ("StreamingPlatformID") ON DELETE CASCADE;
 
 ALTER TABLE "StreamingPlatformSongs" ADD FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE;
-
-ALTER TABLE "AlbumSongs" ADD FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE;
-
-ALTER TABLE "AlbumSongs" ADD FOREIGN KEY ("AlbumID") REFERENCES "Album" ("AlbumID") ON DELETE CASCADE;
-
-ALTER TABLE "ArtistAlbums" ADD FOREIGN KEY ("ArtistID") REFERENCES "Artist" ("ArtistID") ON DELETE CASCADE;
-
-ALTER TABLE "ArtistAlbums" ADD FOREIGN KEY ("AlbumID") REFERENCES "Album" ("AlbumID") ON DELETE CASCADE;
