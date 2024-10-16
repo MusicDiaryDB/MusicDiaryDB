@@ -1,11 +1,11 @@
 import psycopg2
 
 db_config = {
-    'dbname': 'music_diary_db',
-    'user': 'admin',
-    'password': 'admin',
-    'host': '127.0.0.1',
-    'port': '5432'
+    "dbname": "music_diary_db",
+    "user": "admin",
+    "password": "admin",
+    "host": "127.0.0.1",
+    "port": "5432",
 }
 
 
@@ -21,7 +21,7 @@ def create_connection():
 
 def create_tables(conn):
     create_users_table: str
-    with open("../data/tables.sql") as f:
+    with open("data/tables.sql") as f:
         create_users_table = str(f.read())
         # print(create_users_table)
 
@@ -37,7 +37,7 @@ def create_tables(conn):
 
 def insert_data(conn):
     insert_data: str
-    with open("../data/fake-data.sql") as f:
+    with open("data/fake-data.sql") as f:
         insert_data = str(f.read())
         # print(insert_data)
 
@@ -51,7 +51,7 @@ def insert_data(conn):
         conn.rollback()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     conn = create_connection()
 
     if conn:

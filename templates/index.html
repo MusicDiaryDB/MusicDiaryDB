@@ -1,618 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Music Diary Management</title>
-  <!-- <link rel="stylesheet" href="/static/css/styles.css"> -->
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Diary Management</title>
+    <!-- <link rel="stylesheet" href="/static/css/styles.css"> -->
+    <script src="/static/js/script.js" defer></script>
+  </head>
 
-<body>
-  <h1>Music Diary Management</h1>
+  <body>
+    <h1>Music Diary Management</h1>
 
-  <!-- User Operations -->
-  <section id="user">
-    <h2>User Management</h2>
+    <!-- User Operations -->
+    <section id="user">
+      <h2>User Management</h2>
 
-    <!-- Create User -->
-    <form id="create-user-form">
-      <input type="text" name="username" placeholder="Username" required>
-      <input type="text" name="visibility" placeholder="Visibility" required>
-      <button type="submit">Create User</button>
-    </form>
-
-    <!-- Update User -->
-    <form id="update-user-form">
-      <input type="text" name="userId" placeholder="User ID" required>
-      <input type="text" name="username" placeholder="Updated Username">
-      <input type="text" name="visibility" placeholder="Updated Visibility" required>
-      <button type="submit">Update User</button>
-    </form>
-
-    <!-- Delete User -->
-    <form id="delete-user-form">
-      <input type="text" name="userId" placeholder="User ID" required>
-      <button type="submit">Delete User</button>
-    </form>
-
-    <!-- Output for user operations -->
-    <div id="user-output"></div>
-  </section>
-
-  <!-- Diary Report Operations -->
-  <section id="report">
-    <h2>Diary Report Management</h2>
-
-    <!-- Create Report  -->
-    <form id="create-report-form">
-      <input type="date" name="date" required>
-      <textarea name="description" placeholder="Report Contents"></textarea>
-      <input type="text" name="visibility" placeholder="Visibility" required>
-      <input type="text" name="userId" placeholder="User ID" required>
-      <button type="submit">Create Report</button>
-    </form>
-
-    <!-- Update Report -->
-    <form id="update-report-form">
-      <input type="text" name="reportId" placeholder="Report ID" required>
-      <!-- <input type="text" name="title" placeholder="Updated Title"> -->
-      <input type="text" name="visibility" placeholder="Updated Visibility">
-      <textarea name="description" placeholder="Updated Contents"></textarea>
-      <button type="submit">Update Report</button>
-    </form>
-
-    <!-- Delete Report -->
-    <form id="delete-report-form">
-      <input type="text" name="reportId" placeholder="Report ID" required>
-      <button type="submit">Delete Report</button>
-    </form>
-
-    <!-- Output for report operations -->
-    <div id="report-output"></div>
-  </section>
-
-  <!-- Diary Entry Operations -->
-  <section id="entry">
-    <h2>Diary Entry Management</h2>
-
-    <!-- Create Entry  -->
-    <form id="create-entry-form">
-      <input type="date" name="date" required>
-      <textarea name="description" placeholder="Entry Description"></textarea>
-      <input type="text" name="visibility" placeholder="Visibility" required>
-      <input type="text" name="userId" placeholder="User ID" required>
-      <button type="submit">Create Entry</button>
-    </form>
-
-    <!-- Update Entry -->
-    <form id="update-entry-form">
-      <input type="text" name="entryId" placeholder="Entry ID" required>
-      <!-- <input type="text" name="title" placeholder="Updated Title"> -->
-      <input type="text" name="visibility" placeholder="Updated Visibility">
-      <textarea name="description" placeholder="Updated Description"></textarea>
-      <button type="submit">Update Entry</button>
-    </form>
-
-    <!-- Delete Entry -->
-    <form id="delete-entry-form">
-      <input type="text" name="entryId" placeholder="Entry ID" required>
-      <button type="submit">Delete Entry</button>
-    </form>
-
-    <!-- Output for entry operations -->
-    <div id="entry-output"></div>
-  </section>
-
-  <!-- User Review Operations -->
-  <section id="review">
-    <h2>User Review Management</h2>
-
-    <!-- Create Review -->
-    <form id="create-review-form">
-      <input type="text" name="songId" placeholder="Song ID" required>
-      <input type="text" name="visibility" placeholder="Visibility" required>
-      <textarea name="contents" placeholder="Review Contents" required></textarea>
-      <button type="submit">Create Review</button>
-    </form>
-
-    <!-- Update Review -->
-    <form id="update-review-form">
-      <input type="text" name="reviewId" placeholder="Review ID" required>
-      <input type="text" name="visibility" placeholder="Updated Visibility" required>
-      <textarea name="contents" placeholder="Updated Review Contents"></textarea>
-      <button type="submit">Update Review</button>
-    </form>
-
-    <!-- Delete Review -->
-    <form id="delete-review-form">
-      <input type="text" name="reviewId" placeholder="Review ID" required>
-      <button type="submit">Delete Review</button>
-    </form>
-
-    <!-- Output for review operations -->
-    <div id="review-output"></div>
-    <h1>Music Management</h1>
-
-    <!-- Song Management -->
-    <section id="song-management">
-      <h2>Song Management</h2>
-
-      <!-- Create Song -->
-      <form id="create-song-form">
-        <input type="date" name="releaseDate" placeholder="Release Date" required>
-        <input type="text" name="name" placeholder="Song Name" required>
-        <button type="submit">Create Song</button>
+      <!-- Create User -->
+      <form id="create-user-form">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="text" name="visibility" placeholder="Visibility" required>
+        <button type="submit">Create User</button>
       </form>
 
-      <!-- Update Song -->
-      <form id="update-song-form">
-        <input type="text" name="songId" placeholder="Song ID" required>
-        <input type="date" name="releaseDate" placeholder="Updated Release Date" required>
-        <input type="text" name="name" placeholder="Updated Song Name" required>
-        <button type="submit">Update Song</button>
-      </form>
-
-      <!-- Delete Song -->
-      <form id="delete-song-form">
-        <input type="text" name="songId" placeholder="Song ID" required>
-        <button type="submit">Delete Song</button>
-      </form>
-
-      <div id="song-output"></div>
-    </section>
-
-    <!-- Streaming Platform Management -->
-    <section id="streaming-platform-management">
-      <h2>Streaming Platform Management</h2>
-
-      <!-- Create Streaming Platform -->
-      <form id="create-platform-form">
-        <input type="text" name="name" placeholder="Platform Name" required>
-        <button type="submit">Create Streaming Platform</button>
-      </form>
-
-      <!-- Update Streaming Platform -->
-      <form id="update-platform-form">
-        <input type="text" name="platformId" placeholder="Platform ID" required>
-        <input type="text" name="name" placeholder="Updated Platform Name" required>
-        <button type="submit">Update Streaming Platform</button>
-      </form>
-
-      <!-- Delete Streaming Platform -->
-      <form id="delete-platform-form">
-        <input type="text" name="platformId" placeholder="Platform ID" required>
-        <button type="submit">Delete Streaming Platform</button>
-      </form>
-
-      <div id="platform-output"></div>
-    </section>
-
-    <!-- Album Management -->
-    <section id="album-management">
-      <h2>Album Management</h2>
-
-      <!-- Create Album -->
-      <form id="create-album-form">
-        <input type="text" name="name" placeholder="Album Name" required>
-        <button type="submit">Create Album</button>
-      </form>
-
-      <!-- Update Album -->
-      <form id="update-album-form">
-        <input type="text" name="albumId" placeholder="Album ID" required>
-        <input type="text" name="name" placeholder="Updated Album Name" required>
-        <button type="submit">Update Album</button>
-      </form>
-
-      <!-- Delete Album -->
-      <form id="delete-album-form">
-        <input type="text" name="albumId" placeholder="Album ID" required>
-        <button type="submit">Delete Album</button>
-      </form>
-
-      <div id="album-output"></div>
-    </section>
-
-    <!-- Artist Management -->
-    <section id="artist-management">
-      <h2>Artist Management</h2>
-
-      <!-- Create Artist -->
-      <form id="create-artist-form">
-        <input type="text" name="name" placeholder="Artist Name" required>
-        <button type="submit">Create Artist</button>
-      </form>
-
-      <!-- Update Artist -->
-      <form id="update-artist-form">
-        <input type="text" name="artistId" placeholder="Artist ID" required>
-        <input type="text" name="name" placeholder="Updated Artist Name" required>
-        <button type="submit">Update Artist</button>
-      </form>
-
-      <!-- Delete Artist -->
-      <form id="delete-artist-form">
-        <input type="text" name="artistId" placeholder="Artist ID" required>
-        <button type="submit">Delete Artist</button>
-      </form>
-
-      <div id="artist-output"></div>
-    </section>
-
-    <section id="user-review-management">
-      <h1>User Reviews</h1>
-
-      <form id="create-user-review-form">
-        <label for="userId">User ID:</label>
-        <input type="text" id="userId" name="userId" required>
-        <label for="reviewId">Review ID:</label>
-        <input type="text" id="reviewId" name="reviewId" required>
-        <button type="submit">Link User to Review</button>
-      </form>
-
-      <form id="update-user-review-form">
+      <!-- Update User -->
+      <form id="update-user-form">
         <input type="text" name="userId" placeholder="User ID" required>
+        <input type="text" name="username" placeholder="Updated Username">
+        <input type="text" name="visibility" placeholder="Updated Visibility" required>
+        <button type="submit">Update User</button>
+      </form>
+
+      <!-- Delete User -->
+      <form id="delete-user-form">
+        <input type="text" name="userId" placeholder="User ID" required>
+        <button type="submit">Delete User</button>
+      </form>
+
+      <!-- Output for user operations -->
+      <div id="user-output"></div>
+    </section>
+
+    <!-- Diary Report Operations -->
+    <section id="report">
+      <h2>Diary Report Management</h2>
+
+      <!-- Create Report  -->
+      <form id="create-report-form">
+        <input type="date" name="date" required>
+        <textarea name="description" placeholder="Report Contents"></textarea>
+        <input type="text" name="visibility" placeholder="Visibility" required>
+        <input type="text" name="userId" placeholder="User ID" required>
+        <button type="submit">Create Report</button>
+      </form>
+
+      <!-- Update Report -->
+      <form id="update-report-form">
+        <input type="text" name="reportId" placeholder="Report ID" required>
+        <!-- <input type="text" name="title" placeholder="Updated Title"> -->
+        <input type="text" name="visibility" placeholder="Updated Visibility">
+        <textarea name="description" placeholder="Updated Contents"></textarea>
+        <button type="submit">Update Report</button>
+      </form>
+
+      <!-- Delete Report -->
+      <form id="delete-report-form">
+        <input type="text" name="reportId" placeholder="Report ID" required>
+        <button type="submit">Delete Report</button>
+      </form>
+
+      <!-- Output for report operations -->
+      <div id="report-output"></div>
+    </section>
+
+    <!-- Diary Entry Operations -->
+    <section id="entry">
+      <h2>Diary Entry Management</h2>
+
+      <!-- Create Entry  -->
+      <form id="create-entry-form">
+        <input type="date" name="date" required>
+        <textarea name="description" placeholder="Entry Description"></textarea>
+        <input type="text" name="visibility" placeholder="Visibility" required>
+        <input type="text" name="userId" placeholder="User ID" required>
+        <button type="submit">Create Entry</button>
+      </form>
+
+      <!-- Update Entry -->
+      <form id="update-entry-form">
+        <input type="text" name="entryId" placeholder="Entry ID" required>
+        <!-- <input type="text" name="title" placeholder="Updated Title"> -->
+        <input type="text" name="visibility" placeholder="Updated Visibility">
+        <textarea name="description" placeholder="Updated Description"></textarea>
+        <button type="submit">Update Entry</button>
+      </form>
+
+      <!-- Delete Entry -->
+      <form id="delete-entry-form">
+        <input type="text" name="entryId" placeholder="Entry ID" required>
+        <button type="submit">Delete Entry</button>
+      </form>
+
+      <!-- Output for entry operations -->
+      <div id="entry-output"></div>
+    </section>
+
+    <!-- User Review Operations -->
+    <section id="review">
+      <h2>User Review Management</h2>
+
+      <!-- Create Review -->
+      <form id="create-review-form">
+        <input type="text" name="songId" placeholder="Song ID" required>
+        <input type="text" name="visibility" placeholder="Visibility" required>
+        <textarea name="contents" placeholder="Review Contents" required></textarea>
+        <button type="submit">Create Review</button>
+      </form>
+
+      <!-- Update Review -->
+      <form id="update-review-form">
         <input type="text" name="reviewId" placeholder="Review ID" required>
-        <input type="text" name="new-userId" placeholder="Updated User ID" required>
-        <input type="text" name="new-reviewId" placeholder="Updated Review ID" required>
-        <button type="submit">Update User Review</button>
+        <input type="text" name="visibility" placeholder="Updated Visibility" required>
+        <textarea name="contents" placeholder="Updated Review Contents"></textarea>
+        <button type="submit">Update Review</button>
       </form>
 
-      <form id="delete-user-review-form">
-        <input type="text" name="userId" placeholder="User ID" required>
-        <input type="text" name="reviewId" placeholder="reviewId" required>
-        <button type="submit">Delete User Review</button>
+      <!-- Delete Review -->
+      <form id="delete-review-form">
+        <input type="text" name="reviewId" placeholder="Review ID" required>
+        <button type="submit">Delete Review</button>
       </form>
 
-      <div id="user-review-output"></div>
+      <!-- Output for review operations -->
+      <div id="review-output"></div>
+      <h1>Music Management</h1>
+
+      <!-- Song Management -->
+      <section id="song-management">
+        <h2>Song Management</h2>
+
+        <!-- Create Song -->
+        <form id="create-song-form">
+          <input type="date" name="releaseDate" placeholder="Release Date" required>
+          <input type="text" name="name" placeholder="Song Name" required>
+          <button type="submit">Create Song</button>
+        </form>
+
+        <!-- Update Song -->
+        <form id="update-song-form">
+          <input type="text" name="songId" placeholder="Song ID" required>
+          <input type="date" name="releaseDate" placeholder="Updated Release Date" required>
+          <input type="text" name="name" placeholder="Updated Song Name" required>
+          <button type="submit">Update Song</button>
+        </form>
+
+        <!-- Delete Song -->
+        <form id="delete-song-form">
+          <input type="text" name="songId" placeholder="Song ID" required>
+          <button type="submit">Delete Song</button>
+        </form>
+
+        <div id="song-output"></div>
+      </section>
+
+      <!-- Streaming Platform Management -->
+      <section id="streaming-platform-management">
+        <h2>Streaming Platform Management</h2>
+
+        <!-- Create Streaming Platform -->
+        <form id="create-platform-form">
+          <input type="text" name="name" placeholder="Platform Name" required>
+          <button type="submit">Create Streaming Platform</button>
+        </form>
+
+        <!-- Update Streaming Platform -->
+        <form id="update-platform-form">
+          <input type="text" name="platformId" placeholder="Platform ID" required>
+          <input type="text" name="name" placeholder="Updated Platform Name" required>
+          <button type="submit">Update Streaming Platform</button>
+        </form>
+
+        <!-- Delete Streaming Platform -->
+        <form id="delete-platform-form">
+          <input type="text" name="platformId" placeholder="Platform ID" required>
+          <button type="submit">Delete Streaming Platform</button>
+        </form>
+
+        <div id="platform-output"></div>
+      </section>
+
+      <!-- Album Management -->
+      <section id="album-management">
+        <h2>Album Management</h2>
+
+        <!-- Create Album -->
+        <form id="create-album-form">
+          <input type="text" name="name" placeholder="Album Name" required>
+          <button type="submit">Create Album</button>
+        </form>
+
+        <!-- Update Album -->
+        <form id="update-album-form">
+          <input type="text" name="albumId" placeholder="Album ID" required>
+          <input type="text" name="name" placeholder="Updated Album Name" required>
+          <button type="submit">Update Album</button>
+        </form>
+
+        <!-- Delete Album -->
+        <form id="delete-album-form">
+          <input type="text" name="albumId" placeholder="Album ID" required>
+          <button type="submit">Delete Album</button>
+        </form>
+
+        <div id="album-output"></div>
+      </section>
+
+      <!-- Artist Management -->
+      <section id="artist-management">
+        <h2>Artist Management</h2>
+
+        <!-- Create Artist -->
+        <form id="create-artist-form">
+          <input type="text" name="name" placeholder="Artist Name" required>
+          <button type="submit">Create Artist</button>
+        </form>
+
+        <!-- Update Artist -->
+        <form id="update-artist-form">
+          <input type="text" name="artistId" placeholder="Artist ID" required>
+          <input type="text" name="name" placeholder="Updated Artist Name" required>
+          <button type="submit">Update Artist</button>
+        </form>
+
+        <!-- Delete Artist -->
+        <form id="delete-artist-form">
+          <input type="text" name="artistId" placeholder="Artist ID" required>
+          <button type="submit">Delete Artist</button>
+        </form>
+
+        <div id="artist-output"></div>
+      </section>
+
+      <section id="user-review-management">
+        <h1>User Reviews</h1>
+
+        <form id="create-user-review-form">
+          <label for="userId">User ID:</label>
+          <input type="text" id="userId" name="userId" required>
+          <label for="reviewId">Review ID:</label>
+          <input type="text" id="reviewId" name="reviewId" required>
+          <button type="submit">Link User to Review</button>
+        </form>
+
+        <form id="update-user-review-form">
+          <input type="text" name="userId" placeholder="User ID" required>
+          <input type="text" name="reviewId" placeholder="Review ID" required>
+          <input type="text" name="new-userId" placeholder="Updated User ID" required>
+          <input type="text" name="new-reviewId" placeholder="Updated Review ID" required>
+          <button type="submit">Update User Review</button>
+        </form>
+
+        <form id="delete-user-review-form">
+          <input type="text" name="userId" placeholder="User ID" required>
+          <input type="text" name="reviewId" placeholder="reviewId" required>
+          <button type="submit">Delete User Review</button>
+        </form>
+
+        <div id="user-review-output"></div>
+      </section>
     </section>
-  </section>
-
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // User Management
-      const createUserForm = document.getElementById('create-user-form');
-      const updateUserForm = document.getElementById('update-user-form');
-      const deleteUserForm = document.getElementById('delete-user-form');
-      const userOutput = document.getElementById('user-output');
-
-      // Create User
-      createUserForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(createUserForm);
-        const response = await fetch('/user/', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-        userOutput.innerHTML = `<p>${result.message}</p><p>UserID: ${result.UserID}</p>`;
-      });
-
-      // Update User
-      updateUserForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(updateUserForm);
-        const userId = formData.get('userId');
-        const response = await fetch(`/user/${userId}`, {
-          method: 'PUT',
-          body: formData,
-        });
-
-        const result = await response.json();
-        userOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Delete User
-      deleteUserForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(deleteUserForm);
-        const userId = formData.get('userId');
-        const response = await fetch(`/user/${userId}`, {
-          method: 'DELETE',
-        });
-
-        const result = await response.json();
-        userOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Song Management
-      const createSongForm = document.getElementById('create-song-form');
-      const updateSongForm = document.getElementById('update-song-form');
-      const deleteSongForm = document.getElementById('delete-song-form');
-      const songOutput = document.getElementById('song-output');
-
-      // Create Song
-      createSongForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(createSongForm);
-        const response = await fetch('/song/', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-        songOutput.innerHTML = `<p>${result.message}</p><p>SongID: ${result.SongID}</p>`;
-      });
-
-      // Update Song
-      updateSongForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(updateSongForm);
-        const songId = formData.get('songId');
-        const response = await fetch(`/song/${songId}`, {
-          method: 'PUT',
-          body: formData,
-        });
-
-        const result = await response.json();
-        songOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Delete Song
-      deleteSongForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(deleteSongForm);
-        const songId = formData.get('songId');
-        const response = await fetch(`/song/${songId}`, {
-          method: 'DELETE',
-        });
-
-        const result = await response.json();
-        songOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Streaming Platform Management
-      const createPlatformForm = document.getElementById('create-platform-form');
-      const updatePlatformForm = document.getElementById('update-platform-form');
-      const deletePlatformForm = document.getElementById('delete-platform-form');
-      const platformOutput = document.getElementById('platform-output');
-
-      // Create Streaming Platform
-      createPlatformForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(createPlatformForm);
-        const response = await fetch('/platform/', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-        platformOutput.innerHTML = `<p>${result.message}</p><p>PlatformID: ${result.PlatformID}</p>`;
-      });
-
-      // Update Streaming Platform
-      updatePlatformForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(updatePlatformForm);
-        const platformId = formData.get('platformId');
-        const response = await fetch(`/platform/${platformId}`, {
-          method: 'PUT',
-          body: formData,
-        });
-
-        const result = await response.json();
-        platformOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Delete Streaming Platform
-      deletePlatformForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(deletePlatformForm);
-        const platformId = formData.get('platformId');
-        const response = await fetch(`/platform/${platformId}`, {
-          method: 'DELETE',
-        });
-
-        const result = await response.json();
-        platformOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Album Management
-      const createAlbumForm = document.getElementById('create-album-form');
-      const updateAlbumForm = document.getElementById('update-album-form');
-      const deleteAlbumForm = document.getElementById('delete-album-form');
-      const albumOutput = document.getElementById('album-output');
-
-      // Create Album
-      createAlbumForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(createAlbumForm);
-        const response = await fetch('/album/', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-        albumOutput.innerHTML = `<p>${result.message}</p><p>AlbumID: ${result.AlbumID}</p>`;
-      });
-
-      // Update Album
-      updateAlbumForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(updateAlbumForm);
-        const albumId = formData.get('albumId');
-        const response = await fetch(`/album/${albumId}`, {
-          method: 'PUT',
-          body: formData,
-        });
-
-        const result = await response.json();
-        albumOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Delete Album
-      deleteAlbumForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(deleteAlbumForm);
-        const albumId = formData.get('albumId');
-        const response = await fetch(`/album/${albumId}`, {
-          method: 'DELETE',
-        });
-
-        const result = await response.json();
-        albumOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Artist Management
-      const createArtistForm = document.getElementById('create-artist-form');
-      const updateArtistForm = document.getElementById('update-artist-form');
-      const deleteArtistForm = document.getElementById('delete-artist-form');
-      const artistOutput = document.getElementById('artist-output');
-
-      // Create Artist
-      createArtistForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(createArtistForm);
-        const response = await fetch('/artist/', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-        artistOutput.innerHTML = `<p>${result.message}</p><p>ArtistID: ${result.ArtistID}</p>`;
-      });
-
-      // Update Artist
-      updateArtistForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(updateArtistForm);
-        const artistId = formData.get('artistId');
-        const response = await fetch(`/artist/${artistId}`, {
-          method: 'PUT',
-          body: formData,
-        });
-
-        const result = await response.json();
-        artistOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Delete Artist
-      deleteArtistForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(deleteArtistForm);
-        const artistId = formData.get('artistId');
-        const response = await fetch(`/artist/${artistId}`, {
-          method: 'DELETE',
-        });
-
-        const result = await response.json();
-        artistOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // User Review Management (already present)
-      const createReviewForm = document.getElementById('create-review-form');
-      const updateReviewForm = document.getElementById('update-review-form');
-      const deleteReviewForm = document.getElementById('delete-review-form');
-      const reviewOutput = document.getElementById('review-output');
-
-      // Create Review
-      createReviewForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(createReviewForm);
-        const songId = formData.get('songId');
-        const response = await fetch(`/review/${songId}`, {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-        reviewOutput.innerHTML = `<p>${result.message}</p><p>ReviewID: ${result.ReviewID}</p>`;
-      });
-
-      // Update Review
-      updateReviewForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(updateReviewForm);
-        const reviewId = formData.get('reviewId');
-        const response = await fetch(`/review/${reviewId}`, {
-          method: 'PUT',
-          body: formData,
-        });
-
-        const result = await response.json();
-        reviewOutput.innerHTML = `<p>${result.message}</p><p>ReviewID: ${result.ReviewID}</p>`;
-      });
-
-      // Delete Review
-      deleteReviewForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(deleteReviewForm);
-        const reviewId = formData.get('reviewId');
-        const response = await fetch(`/review/${reviewId}`, {
-          method: 'DELETE',
-        });
-
-        const result = await response.json();
-        reviewOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Create User Review Management
-      const createUserReviewForm = document.getElementById('create-user-review-form');
-      const createUserReviewOutput = document.getElementById('user-review-output');
-
-      createUserReviewForm.addEventListener('submit', async function (e) {
-        e.preventDefault(); // Prevent the default form submission behavior
-        const formData = new FormData(createUserReviewForm);
-        console.log(formData)
-
-        const response = await fetch('/user_review/', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-        createUserReviewOutput.innerHTML = `<p>${result.message}</p>`;
-      });
-
-      // Update User Review Management
-      const updateUserReviewForm = document.getElementById('update-user-review-form');
-      const updateUserReviewOutput = document.getElementById('user-review-output');
-
-      updateUserReviewForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(updateUserReviewForm);
-        const userId = formData.get('userId');
-        const reviewId = formData.get('reviewId');
-
-        try {
-          const response = await fetch(`/user_review/${userId}/${reviewId}`, {
-            method: 'PUT',
-            body: formData,
-          });
-
-          const result = await response.json();
-          updateUserReviewOutput.innerHTML = `<p>${result.message}</p>`;
-        } catch (error) {
-          updateUserReviewOutput.innerHTML = `<p>Error: ${error.message}</p>`;
-        }
-      });
-
-      // Delete User Review Management
-      const deleteUserReviewForm = document.getElementById('delete-user-review-form');
-      const deleteUserReviewOutput = document.getElementById('user-review-output');
-
-      deleteUserReviewForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const formData = new FormData(deleteUserReviewForm);
-        const userId = formData.get('userId');
-        const reviewId = formData.get('reviewId');
-
-        try {
-          const response = await fetch(`/user_review/${userId}/${reviewId}`, {
-            method: 'DELETE',
-          });
-
-          const result = await response.json();
-          deleteUserReviewOutput.innerHTML = `<p>${result.message}</p>`;
-        } catch (error) {
-          deleteUserReviewOutput.innerHTML = `<p>Error: ${error.message}</p>`;
-        }
-      });
-    });
-  </script>
-</body>
-
+  </body>
 </html>
