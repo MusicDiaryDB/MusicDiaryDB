@@ -5,8 +5,10 @@ from helpers import (
     delete_resource_with_multiple_keys,
     # update_resource_with_multiple_keys,
 )
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 
 # ============================
