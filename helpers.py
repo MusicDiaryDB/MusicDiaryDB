@@ -32,7 +32,7 @@ def execute_query(query, params=None, fetch_one=False):
                 result = cur.fetchone() if fetch_one else cur.fetchall()
             else:
                 result = cur.rowcount
-            conn.commit()
+                conn.commit()
     except Exception as e:
         print(f"Error: {e}")
         conn.rollback()
@@ -43,53 +43,62 @@ def execute_query(query, params=None, fetch_one=False):
 
 
 def create_resource(table, params, primary_key):
-    max_id_query = f'SELECT MAX("{primary_key}") FROM "{table}"'
-    max_id_result = execute_query(max_id_query, fetch_one=True)
+    if primary_key and isinstance(primary_key, str):
+        max_id_query = f'SELECT MAX("{primary_key}") FROM "{table}"'
+        max_id_result = execute_query(max_id_query, fetch_one=True)
 
-    max_id = None
-    if isinstance(max_id_result, dict):
-        max_id = max_id_result.get("max")
-        print(f"Max ID = {max_id}")
+        max_id = None
+        if isinstance(max_id_result, dict):
+            max_id = max_id_result.get("max")
+            print(f"Max ID = {max_id}")
+        else:
+            print("Failed to get max id result")
+
+        table_quoted = f'"{table}"'
+        seq_name_query = (
+            f"SELECT pg_get_serial_sequence('{table_quoted}', '{primary_key}')"
+        )
+        seq_name_result = execute_query(seq_name_query, fetch_one=True)
+
+        seq_name = None
+        if seq_name_result and isinstance(seq_name_result, dict):
+            seq_name = seq_name_result.get("pg_get_serial_sequence")
+        else:
+            print(
+                f"No sequence found for table '{table}' and primary key '{primary_key}'"
+            )
+
+        if seq_name is not None and max_id is not None:
+            setval_query = f"SELECT setval('{seq_name}', {max_id})"
+            execute_query(setval_query)
     else:
-        print("Failed to get max id result")
+        print(f"Table '{table}' has no single primary key. Skipping sequence reset.")
 
-    # TODO: add better handling of intermediary tables where max_id doesn't matter.
-    # the seq name is none if you try to run it in that case
-
-    table_quoted = f'"{table}"'
-    seq_name_query = f"SELECT pg_get_serial_sequence('{table_quoted}', '{primary_key}')"
-    seq_name_result = execute_query(seq_name_query, fetch_one=True)
-
-    seq_name = None
-    if seq_name_result and isinstance(seq_name_result, list):
-        seq_name = seq_name_result[0]["pg_get_serial_sequence"]
-    elif isinstance(seq_name_result, dict):
-        seq_name = seq_name_result["pg_get_serial_sequence"]
-    else:
-        print(f"No sequence found for table '{table}' and primary key '{primary_key}'")
-    if seq_name is not None:
-        setval_query = f"SELECT setval('{seq_name}', {max_id})"
-        execute_query(setval_query)
-
-    keys = ", ".join(
-        [f'"{key[0].upper() + key[1:].replace("Id", "ID")}"' for key in params.keys()]
-    )
+    keys = ", ".join([f'"{format_column_name(key)}"' for key in params.keys()])
     values = ", ".join(["%s" for _ in params.keys()])
 
     insert_query = f'INSERT INTO "{table}" ({keys}) VALUES ({values})'
-    # NOTE: commented out to avoid issues with multi-key tables (also didn't really work anyway)
-    # f'INSERT INTO "{table}" ({keys}) VALUES ({values}) RETURNING "{primary_key}"'
     print(insert_query)
 
-    return execute_query(insert_query, tuple(params.values()), fetch_one=True)
+    result = execute_query(insert_query, tuple(params.values()))
+    if result is not None and primary_key and isinstance(primary_key, str):
+        return get_last_insert_id(table, primary_key)
+    else:
+        return True
+
+
+def get_last_insert_id(table, primary_key):
+    query = f'SELECT MAX("{primary_key}") AS id FROM "{table}"'
+    result = execute_query(query, fetch_one=True)
+    if result and "id" in result:
+        return result["id"]
+    else:
+        return None
 
 
 def update_resource(table, params, identifier, primary_key):
     set_clause = ", ".join(
-        [
-            f'"{key[0].upper() + key[1:].replace("Id", "ID")}" = %s'
-            for key in params.keys()
-        ]
+        [f'"{format_column_name(key)}" = %s' for key in params.keys()]
     )
     query = f'UPDATE "{table}" SET {set_clause} WHERE "{primary_key}" = %s'
     return execute_query(query, tuple(params.values()) + (identifier,))
@@ -105,52 +114,51 @@ def get_resource(table, identifier, primary_key):
     return execute_query(query, (identifier,), fetch_one=True)
 
 
-def format_param_key(key):
-    if key.startswith("new-"):
-        return "new-" + key[4].upper() + key[5:].replace("Id", "ID")
+def format_column_name(key):
     return key[0].upper() + key[1:].replace("Id", "ID")
 
 
-def update_resource_with_multiple_keys(table, data, primary_keys, identifier):
-    params = {key: data.get(key) for key in data.keys()}
-    formatted_params = {format_param_key(key): value for key, value in params.items()}
-    set_clause = ", ".join(
-        [
-            f'"{format_param_key(key[4:])}" = %s'
-            for key in params.keys()
-            if key.startswith("new-")
-        ]
+def update_resource_with_multiple_keys(table, data, primary_keys, identifiers):
+    params = {key: data.get(key) for key in data.keys() if data.get(key)}
+    formatted_params = {format_column_name(key): value for key, value in params.items()}
+
+    set_clause = ", ".join([f'"{key}" = %s' for key in formatted_params.keys()])
+    where_clause = " AND ".join(
+        [f'"{format_column_name(pk)}" = %s' for pk in primary_keys]
     )
-    where_clause = " AND ".join([f'"{key}" = %s' for key in primary_keys])
-    query = f"""
-    UPDATE "{table}"
-    SET {set_clause}
-    WHERE {where_clause}
-    """
+
+    query = f'UPDATE "{table}" SET {set_clause} WHERE {where_clause}'
     print(query)
-    set_values = tuple(formatted_params[f"new-{key}"] for key in primary_keys)
-    where_values = identifier
-    values = set_values + where_values
-    print(values)
+
+    values = tuple(formatted_params.values()) + identifiers
     result = execute_query(query, values)
     if result is None or result == 0:
         return jsonify({"error": f"{table} update failed"}), 404
     return jsonify({"message": f"{table} updated successfully!"}), 200
 
 
-def delete_resource_with_multiple_keys(table, primary_keys, identifier):
-    where_clause = " AND ".join([f'"{key}" = %s' for key in primary_keys])
-    query = f"""
-    DELETE FROM "{table}"
-    WHERE {where_clause}
-    """
+def delete_resource_with_multiple_keys(table, primary_keys, identifiers):
+    where_clause = " AND ".join(
+        [f'"{format_column_name(pk)}" = %s' for pk in primary_keys]
+    )
+    query = f'DELETE FROM "{table}" WHERE {where_clause}'
     print(query)
-    values = identifier
-    print(values)
-    result = execute_query(query, values)
+
+    result = execute_query(query, identifiers)
     if result is None or result == 0:
         return jsonify({"error": f"{table} deletion failed"}), 404
     return jsonify({"message": f"{table} deleted successfully!"}), 200
+
+
+def get_resource_with_multiple_keys(table, primary_keys, identifiers):
+    where_clause = " AND ".join(
+        [f'"{format_column_name(pk)}" = %s' for pk in primary_keys]
+    )
+    query = f'SELECT * FROM "{table}" WHERE {where_clause}'
+    result = execute_query(query, identifiers, fetch_one=True)
+    if result is None:
+        return jsonify({"error": f"{table} not found"}), 404
+    return jsonify(result), 200
 
 
 def handle_request(table, operation, required_fields, primary_key, identifier=None):
@@ -162,32 +170,43 @@ def handle_request(table, operation, required_fields, primary_key, identifier=No
     params = {field: data.get(field) for field in required_fields}
 
     if any(value is None for value in params.values()):
-        return jsonify({"error": f"Missing fields: {params.values()}"}), 400
+        missing_fields = [field for field in params if params[field] is None]
+        return jsonify({"error": f"Missing fields: {missing_fields}"}), 400
 
     if operation.lower() == "create":
-        resource_id = create_resource(table, params, primary_key)
-        if resource_id is None:
+        resource_created = create_resource(table, params, primary_key)
+        if not resource_created:
             return jsonify({"error": f"{table} creation failed"}), 500
-        return jsonify(
-            {"message": f"{table} created", f"{primary_key}": resource_id}
-        ), 201
+        response = {"message": f"{table} created"}
+        if primary_key and isinstance(primary_key, str):
+            response[primary_key] = resource_created
+        return jsonify(response), 201
 
     elif operation.lower() == "update":
-        if isinstance(identifier, tuple):
-            result = None
-            print("don't use handle_request for multiple key deletes/updates")
+        if isinstance(primary_key, list) and isinstance(identifier, tuple):
+            return update_resource_with_multiple_keys(
+                table, data, primary_key, identifier
+            )
         else:
             result = update_resource(table, params, identifier, primary_key)
-        if result is None or result == 0:
-            return jsonify({"error": f"{table} update failed"}), 404
-        return jsonify({"message": f"{table} updated"}), 200
+            if result is None or result == 0:
+                return jsonify({"error": f"{table} update failed"}), 404
+            return jsonify({"message": f"{table} updated"}), 200
 
     elif operation.lower() == "delete":
-        if isinstance(identifier, tuple):
-            result = None
-            print("don't use handle_request for multiple key deletes/updates")
+        if isinstance(primary_key, list) and isinstance(identifier, tuple):
+            return delete_resource_with_multiple_keys(table, primary_key, identifier)
         else:
             result = delete_resource(table, identifier, primary_key)
-        if result is None or result == 0:
-            return jsonify({"error": f"{table} not found"}), 404
-        return jsonify({"message": f"{table} deleted"}), 200
+            if result is None or result == 0:
+                return jsonify({"error": f"{table} not found"}), 404
+            return jsonify({"message": f"{table} deleted"}), 200
+
+    elif operation.lower() == "get":
+        if isinstance(primary_key, list) and isinstance(identifier, tuple):
+            return get_resource_with_multiple_keys(table, primary_key, identifier)
+        else:
+            resource = get_resource(table, identifier, primary_key)
+            if resource is None:
+                return jsonify({"error": f"{table} not found"}), 404
+            return jsonify(resource), 200

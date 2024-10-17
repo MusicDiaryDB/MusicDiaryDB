@@ -1,9 +1,9 @@
 from typing import Any
-from flask import Flask, request, render_template
+from flask import Flask, render_template
 from helpers import (
     handle_request,
     delete_resource_with_multiple_keys,
-    update_resource_with_multiple_keys,
+    # update_resource_with_multiple_keys,
 )
 
 app = Flask(__name__)
@@ -43,7 +43,9 @@ def delete_user(user_id) -> Any:
 
 @app.route("/song/", methods=["POST"])
 def create_song() -> Any:
-    return handle_request("Song", "create", ["name", "releaseDate"], "SongID")
+    return handle_request(
+        "Song", "create", ["name", "releaseDate", "albumId"], "SongID"
+    )
 
 
 @app.route("/song/<int:song_id>", methods=["GET"])
@@ -53,7 +55,9 @@ def get_song(song_id) -> Any:
 
 @app.route("/song/<int:song_id>", methods=["PUT"])
 def update_song(song_id) -> Any:
-    return handle_request("Song", "update", ["name", "releaseDate"], "SongID", song_id)
+    return handle_request(
+        "Song", "update", ["name", "releaseDate", "albumId"], "SongID", song_id
+    )
 
 
 @app.route("/song/<int:song_id>", methods=["DELETE"])
@@ -71,15 +75,24 @@ def create_diary_entry() -> Any:
     return handle_request(
         "DiaryEntry",
         "create",
-        ["date", "description", "visibility", "userId"],
+        ["date", "description", "visibility", "userId", "songId"],
         "EntryID",
     )
+
+
+@app.route("/entry/<int:entry_id>", methods=["GET"])
+def get_diary_entry(entry_id: int) -> Any:
+    return handle_request("DiaryEntry", "get", [], "EntryID", entry_id)
 
 
 @app.route("/entry/<int:entry_id>", methods=["PUT"])
 def update_diary_entry(entry_id: int) -> Any:
     return handle_request(
-        "DiaryEntry", "update", ["description", "visibility"], "EntryID", entry_id
+        "DiaryEntry",
+        "update",
+        ["description", "visibility", "songId"],
+        "EntryID",
+        entry_id,
     )
 
 
@@ -103,6 +116,11 @@ def create_diary_report() -> Any:
     )
 
 
+@app.route("/report/<int:report_id>", methods=["GET"])
+def get_diary_report(report_id: int) -> Any:
+    return handle_request("DiaryReport", "get", [], "ReportID", report_id)
+
+
 @app.route("/report/<int:report_id>", methods=["PUT"])
 def update_diary_report(report_id: int) -> Any:
     return handle_request(
@@ -122,7 +140,7 @@ def delete_diary_report(report_id: int) -> Any:
 
 @app.route("/album/", methods=["POST"])
 def create_album() -> Any:
-    return handle_request("Album", "create", ["name"], "AlbumID")
+    return handle_request("Album", "create", ["name", "artistId"], "AlbumID")
 
 
 @app.route("/album/<int:album_id>", methods=["GET"])
@@ -132,7 +150,7 @@ def get_album(album_id) -> Any:
 
 @app.route("/album/<int:album_id>", methods=["PUT"])
 def update_album(album_id) -> Any:
-    return handle_request("Album", "update", ["name"], "AlbumID", album_id)
+    return handle_request("Album", "update", ["name", "artistId"], "AlbumID", album_id)
 
 
 @app.route("/album/<int:album_id>", methods=["DELETE"])
@@ -206,8 +224,13 @@ def delete_platform(platform_id) -> Any:
 @app.route("/review/", methods=["POST"])
 def create_review() -> Any:
     return handle_request(
-        "Review", "create", ["contents", "visibility", "songId"], "ReviewID"
+        "Review", "create", ["contents", "visibility", "songId", "userId"], "ReviewID"
     )
+
+
+@app.route("/review/<int:review_id>", methods=["GET"])
+def get_review(review_id: int) -> Any:
+    return handle_request("Review", "get", [], "ReviewID", review_id)
 
 
 @app.route("/review/<int:review_id>", methods=["PUT"])
@@ -223,58 +246,82 @@ def delete_review(review_id) -> Any:
 
 
 # ============================
-#     USER REVIEWS ROUTES
+#    REPORT ENTRIES ROUTES
 # ============================
 
 
-@app.route("/user_review/", methods=["POST"])
-def create_user_review() -> Any:
-    return handle_request("UserReviews", "create", ["userId", "reviewId"], "UserID")
+@app.route("/report_entry/", methods=["POST"])
+def create_report_entry() -> Any:
+    return handle_request("ReportEntries", "create", ["reportId", "entryId"], None)
 
 
-@app.route("/user_review/<int:user_id>/<int:review_id>", methods=["PUT"])
-def update_user_review(user_id, review_id) -> Any:
-    return update_resource_with_multiple_keys(
-        "UserReviews", request.form, ["UserID", "ReviewID"], (user_id, review_id)
+@app.route("/report_entry/<int:report_id>/<int:entry_id>", methods=["GET"])
+def get_report_entry(report_id, entry_id) -> Any:
+    return handle_request(
+        "ReportEntries", "get", [], ["ReportID", "EntryID"], (report_id, entry_id)
     )
 
 
-@app.route("/user_review/<int:user_id>/<int:review_id>", methods=["GET"])
-def get_user_review(user_id, review_id) -> Any:
-    return handle_request("UserReviews", "get", [], "UserID", (user_id, review_id))
-
-
-@app.route("/user_review/<int:user_id>/<int:review_id>", methods=["DELETE"])
-def delete_user_review(user_id, review_id) -> Any:
+@app.route("/report_entry/<int:report_id>/<int:entry_id>", methods=["DELETE"])
+def delete_report_entry(report_id, entry_id) -> Any:
     return delete_resource_with_multiple_keys(
-        "UserReviews", ["UserID", "ReviewID"], (user_id, review_id)
+        "ReportEntries", ["ReportID", "EntryID"], (report_id, entry_id)
     )
 
 
 # ============================
-#     ARTIST ALBUM ROUTES
+#     USER FRIENDS ROUTES
 # ============================
 
 
-@app.route("/artist_album/", methods=["POST"])
-def create_artist_album() -> Any:
-    return handle_request("ArtistAlbums", "create", ["artistId", "albumId"], None)
+@app.route("/user_friend/", methods=["POST"])
+def create_user_friend() -> Any:
+    return handle_request("UserFriends", "create", ["userId", "friendUserId"], None)
 
 
-@app.route("/artist_album/<int:artist_id>/<int:album_id>", methods=["PUT"])
-def update_artist_album(artist_id, album_id) -> Any:
-    return update_resource_with_multiple_keys(
-        "ArtistAlbums",
-        request.form,
-        ["ArtistID", "AlbumID"],
-        (artist_id, album_id),
+@app.route("/user_friend/<int:user_id>/<int:friend_user_id>", methods=["GET"])
+def get_user_friend(user_id, friend_user_id) -> Any:
+    return handle_request(
+        "UserFriends", "get", [], ["UserID", "FriendUserID"], (user_id, friend_user_id)
     )
 
 
-@app.route("/artist_album/<int:artist_id>/<int:album_id>", methods=["DELETE"])
-def delete_artist_album(artist_id, album_id) -> Any:
+@app.route("/user_friend/<int:user_id>/<int:friend_user_id>", methods=["DELETE"])
+def delete_user_friend(user_id, friend_user_id) -> Any:
     return delete_resource_with_multiple_keys(
-        "ArtistAlbums", ["ArtistID", "AlbumID"], (artist_id, album_id)
+        "UserFriends", ["UserID", "FriendUserID"], (user_id, friend_user_id)
+    )
+
+
+# ============================
+#  STREAMING PLATFORM SONGS ROUTES
+# ============================
+
+
+@app.route("/platform_song/", methods=["POST"])
+def create_platform_song() -> Any:
+    return handle_request(
+        "StreamingPlatformSongs", "create", ["streamingPlatformId", "songId"], None
+    )
+
+
+@app.route("/platform_song/<int:platform_id>/<int:song_id>", methods=["GET"])
+def get_platform_song(platform_id, song_id) -> Any:
+    return handle_request(
+        "StreamingPlatformSongs",
+        "get",
+        [],
+        ["StreamingPlatformID", "SongID"],
+        (platform_id, song_id),
+    )
+
+
+@app.route("/platform_song/<int:platform_id>/<int:song_id>", methods=["DELETE"])
+def delete_platform_song(platform_id, song_id) -> Any:
+    return delete_resource_with_multiple_keys(
+        "StreamingPlatformSongs",
+        ["StreamingPlatformID", "SongID"],
+        (platform_id, song_id),
     )
 
 

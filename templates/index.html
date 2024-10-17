@@ -45,7 +45,7 @@
   <section id="report">
     <h2>Diary Report Management</h2>
 
-    <!-- Create Report  -->
+    <!-- Create Report -->
     <form id="create-report-form">
       <input type="date" name="date" required>
       <textarea name="description" placeholder="Report Contents"></textarea>
@@ -57,7 +57,6 @@
     <!-- Update Report -->
     <form id="update-report-form">
       <input type="text" name="reportId" placeholder="Report ID" required>
-      <!-- <input type="text" name="title" placeholder="Updated Title"> -->
       <input type="text" name="visibility" placeholder="Updated Visibility">
       <textarea name="description" placeholder="Updated Contents"></textarea>
       <button type="submit">Update Report</button>
@@ -77,21 +76,22 @@
   <section id="entry">
     <h2>Diary Entry Management</h2>
 
-    <!-- Create Entry  -->
+    <!-- Create Entry -->
     <form id="create-entry-form">
       <input type="date" name="date" required>
       <textarea name="description" placeholder="Entry Description"></textarea>
       <input type="text" name="visibility" placeholder="Visibility" required>
       <input type="text" name="userId" placeholder="User ID" required>
+      <input type="text" name="songId" placeholder="Song ID" required>
       <button type="submit">Create Entry</button>
     </form>
 
     <!-- Update Entry -->
     <form id="update-entry-form">
       <input type="text" name="entryId" placeholder="Entry ID" required>
-      <!-- <input type="text" name="title" placeholder="Updated Title"> -->
       <input type="text" name="visibility" placeholder="Updated Visibility">
       <textarea name="description" placeholder="Updated Description"></textarea>
+      <input type="text" name="songId" placeholder="Updated Song ID">
       <button type="submit">Update Entry</button>
     </form>
 
@@ -105,13 +105,14 @@
     <div id="entry-output"></div>
   </section>
 
-  <!-- User Review Operations -->
+  <!-- Review Operations -->
   <section id="review">
-    <h2>User Review Management</h2>
+    <h2>Review Management</h2>
 
     <!-- Create Review -->
     <form id="create-review-form">
       <input type="text" name="songId" placeholder="Song ID" required>
+      <input type="text" name="userId" placeholder="User ID" required>
       <input type="text" name="visibility" placeholder="Visibility" required>
       <textarea name="contents" placeholder="Review Contents" required></textarea>
       <button type="submit">Create Review</button>
@@ -120,7 +121,7 @@
     <!-- Update Review -->
     <form id="update-review-form">
       <input type="text" name="reviewId" placeholder="Review ID" required>
-      <input type="text" name="visibility" placeholder="Updated Visibility" required>
+      <input type="text" name="visibility" placeholder="Updated Visibility">
       <textarea name="contents" placeholder="Updated Review Contents"></textarea>
       <button type="submit">Update Review</button>
     </form>
@@ -133,170 +134,189 @@
 
     <!-- Output for review operations -->
     <div id="review-output"></div>
-    <h1>Music Management</h1>
+  </section>
 
-    <!-- Song Management -->
-    <section id="song-management">
-      <h2>Song Management</h2>
+  <!-- Music Management -->
+  <h1>Music Management</h1>
 
-      <!-- Create Song -->
-      <form id="create-song-form">
-        <input type="date" name="releaseDate" placeholder="Release Date" required>
-        <input type="text" name="name" placeholder="Song Name" required>
-        <button type="submit">Create Song</button>
-      </form>
+  <!-- Song Management -->
+  <section id="song-management">
+    <h2>Song Management</h2>
 
-      <!-- Update Song -->
-      <form id="update-song-form">
-        <input type="text" name="songId" placeholder="Song ID" required>
-        <input type="date" name="releaseDate" placeholder="Updated Release Date" required>
-        <input type="text" name="name" placeholder="Updated Song Name" required>
-        <button type="submit">Update Song</button>
-      </form>
+    <!-- Create Song -->
+    <form id="create-song-form">
+      <input type="date" name="releaseDate" placeholder="Release Date" required>
+      <input type="text" name="name" placeholder="Song Name" required>
+      <input type="text" name="albumId" placeholder="Album ID" required>
+      <button type="submit">Create Song</button>
+    </form>
 
-      <!-- Delete Song -->
-      <form id="delete-song-form">
-        <input type="text" name="songId" placeholder="Song ID" required>
-        <button type="submit">Delete Song</button>
-      </form>
+    <!-- Update Song -->
+    <form id="update-song-form">
+      <input type="text" name="songId" placeholder="Song ID" required>
+      <input type="date" name="releaseDate" placeholder="Updated Release Date">
+      <input type="text" name="name" placeholder="Updated Song Name">
+      <input type="text" name="albumId" placeholder="Updated Album ID">
+      <button type="submit">Update Song</button>
+    </form>
 
-      <div id="song-output"></div>
-    </section>
+    <!-- Delete Song -->
+    <form id="delete-song-form">
+      <input type="text" name="songId" placeholder="Song ID" required>
+      <button type="submit">Delete Song</button>
+    </form>
 
-    <!-- Streaming Platform Management -->
-    <section id="streaming-platform-management">
-      <h2>Streaming Platform Management</h2>
+    <!-- Output for song operations -->
+    <div id="song-output"></div>
+  </section>
 
-      <!-- Create Streaming Platform -->
-      <form id="create-platform-form">
-        <input type="text" name="name" placeholder="Platform Name" required>
-        <button type="submit">Create Streaming Platform</button>
-      </form>
+  <!-- Streaming Platform Management -->
+  <section id="streaming-platform-management">
+    <h2>Streaming Platform Management</h2>
 
-      <!-- Update Streaming Platform -->
-      <form id="update-platform-form">
-        <input type="text" name="platformId" placeholder="Platform ID" required>
-        <input type="text" name="name" placeholder="Updated Platform Name" required>
-        <button type="submit">Update Streaming Platform</button>
-      </form>
+    <!-- Create Streaming Platform -->
+    <form id="create-platform-form">
+      <input type="text" name="name" placeholder="Platform Name" required>
+      <button type="submit">Create Streaming Platform</button>
+    </form>
 
-      <!-- Delete Streaming Platform -->
-      <form id="delete-platform-form">
-        <input type="text" name="platformId" placeholder="Platform ID" required>
-        <button type="submit">Delete Streaming Platform</button>
-      </form>
+    <!-- Update Streaming Platform -->
+    <form id="update-platform-form">
+      <input type="text" name="platformId" placeholder="Platform ID" required>
+      <input type="text" name="name" placeholder="Updated Platform Name">
+      <button type="submit">Update Streaming Platform</button>
+    </form>
 
-      <div id="platform-output"></div>
-    </section>
+    <!-- Delete Streaming Platform -->
+    <form id="delete-platform-form">
+      <input type="text" name="platformId" placeholder="Platform ID" required>
+      <button type="submit">Delete Streaming Platform</button>
+    </form>
 
-    <!-- Album Management -->
-    <section id="album-management">
-      <h2>Album Management</h2>
+    <!-- Output for platform operations -->
+    <div id="platform-output"></div>
+  </section>
 
-      <!-- Create Album -->
-      <form id="create-album-form">
-        <input type="text" name="name" placeholder="Album Name" required>
-        <button type="submit">Create Album</button>
-      </form>
+  <!-- Album Management -->
+  <section id="album-management">
+    <h2>Album Management</h2>
 
-      <!-- Update Album -->
-      <form id="update-album-form">
-        <input type="text" name="albumId" placeholder="Album ID" required>
-        <input type="text" name="name" placeholder="Updated Album Name" required>
-        <button type="submit">Update Album</button>
-      </form>
+    <!-- Create Album -->
+    <form id="create-album-form">
+      <input type="text" name="name" placeholder="Album Name" required>
+      <input type="text" name="artistId" placeholder="Artist ID" required>
+      <button type="submit">Create Album</button>
+    </form>
 
-      <!-- Delete Album -->
-      <form id="delete-album-form">
-        <input type="text" name="albumId" placeholder="Album ID" required>
-        <button type="submit">Delete Album</button>
-      </form>
+    <!-- Update Album -->
+    <form id="update-album-form">
+      <input type="text" name="albumId" placeholder="Album ID" required>
+      <input type="text" name="name" placeholder="Updated Album Name">
+      <input type="text" name="artistId" placeholder="Updated Artist ID">
+      <button type="submit">Update Album</button>
+    </form>
 
-      <div id="album-output"></div>
-    </section>
+    <!-- Delete Album -->
+    <form id="delete-album-form">
+      <input type="text" name="albumId" placeholder="Album ID" required>
+      <button type="submit">Delete Album</button>
+    </form>
 
-    <!-- Artist Management -->
-    <section id="artist-management">
-      <h2>Artist Management</h2>
+    <!-- Output for album operations -->
+    <div id="album-output"></div>
+  </section>
 
-      <!-- Create Artist -->
-      <form id="create-artist-form">
-        <input type="text" name="name" placeholder="Artist Name" required>
-        <button type="submit">Create Artist</button>
-      </form>
+  <!-- Artist Management -->
+  <section id="artist-management">
+    <h2>Artist Management</h2>
 
-      <!-- Update Artist -->
-      <form id="update-artist-form">
-        <input type="text" name="artistId" placeholder="Artist ID" required>
-        <input type="text" name="name" placeholder="Updated Artist Name" required>
-        <button type="submit">Update Artist</button>
-      </form>
+    <!-- Create Artist -->
+    <form id="create-artist-form">
+      <input type="text" name="name" placeholder="Artist Name" required>
+      <button type="submit">Create Artist</button>
+    </form>
 
-      <!-- Delete Artist -->
-      <form id="delete-artist-form">
-        <input type="text" name="artistId" placeholder="Artist ID" required>
-        <button type="submit">Delete Artist</button>
-      </form>
+    <!-- Update Artist -->
+    <form id="update-artist-form">
+      <input type="text" name="artistId" placeholder="Artist ID" required>
+      <input type="text" name="name" placeholder="Updated Artist Name">
+      <button type="submit">Update Artist</button>
+    </form>
 
-      <div id="artist-output"></div>
-    </section>
+    <!-- Delete Artist -->
+    <form id="delete-artist-form">
+      <input type="text" name="artistId" placeholder="Artist ID" required>
+      <button type="submit">Delete Artist</button>
+    </form>
 
-    <section id="user-review-management">
-      <h1>User Reviews</h1>
+    <!-- Output for artist operations -->
+    <div id="artist-output"></div>
+  </section>
 
-      <form id="create-user-review-form">
-        <label for="userId">User ID:</label>
-        <input type="text" id="userId" name="userId" required>
-        <label for="reviewId">Review ID:</label>
-        <input type="text" id="reviewId" name="reviewId" required>
-        <button type="submit">Link User to Review</button>
-      </form>
+  <!-- Report Entries Management -->
+  <section id="report-entry-management">
+    <h2>Report Entries Management</h2>
 
-      <form id="update-user-review-form">
-        <input type="text" name="userId" placeholder="User ID" required>
-        <input type="text" name="reviewId" placeholder="Review ID" required>
-        <input type="text" name="new-userId" placeholder="Updated User ID" required>
-        <input type="text" name="new-reviewId" placeholder="Updated Review ID" required>
-        <button type="submit">Update User Review</button>
-      </form>
+    <!-- Create Report Entry -->
+    <form id="create-report-entry-form">
+      <input type="text" name="reportId" placeholder="Report ID" required>
+      <input type="text" name="entryId" placeholder="Entry ID" required>
+      <button type="submit">Add Entry to Report</button>
+    </form>
 
-      <form id="delete-user-review-form">
-        <input type="text" name="userId" placeholder="User ID" required>
-        <input type="text" name="reviewId" placeholder="reviewId" required>
-        <button type="submit">Delete User Review</button>
-      </form>
+    <!-- Delete Report Entry -->
+    <form id="delete-report-entry-form">
+      <input type="text" name="reportId" placeholder="Report ID" required>
+      <input type="text" name="entryId" placeholder="Entry ID" required>
+      <button type="submit">Remove Entry from Report</button>
+    </form>
 
-      <div id="user-review-output"></div>
-    </section>
+    <!-- Output for report entry operations -->
+    <div id="report-entry-output"></div>
+  </section>
 
+  <!-- User Friends Management -->
+  <section id="user-friends-management">
+    <h2>User Friends Management</h2>
 
-    <section id="artist-album-management">
-      <h1>Artist Album Management</h1>
+    <!-- Create User Friend -->
+    <form id="create-user-friend-form">
+      <input type="text" name="userId" placeholder="User ID" required>
+      <input type="text" name="friendUserId" placeholder="Friend User ID" required>
+      <button type="submit">Add Friend</button>
+    </form>
 
-      <form id="create-artist-album-form">
-        <label for="artistId">Artist ID:</label>
-        <input type="text" id="artistId" name="artistId" required>
-        <label for="albumId">Album ID:</label>
-        <input type="text" id="albumId" name="albumId" required>
-        <button type="submit">Link Artist to Album</button>
-      </form>
+    <!-- Delete User Friend -->
+    <form id="delete-user-friend-form">
+      <input type="text" name="userId" placeholder="User ID" required>
+      <input type="text" name="friendUserId" placeholder="Friend User ID" required>
+      <button type="submit">Remove Friend</button>
+    </form>
 
-      <form id="update-artist-album-form">
-        <input type="text" name="artistId" placeholder="Artist ID" required>
-        <input type="text" name="albumId" placeholder="Album ID" required>
-        <input type="text" name="new-ArtistID" placeholder="Updated Artist ID" required>
-        <input type="text" name="new-AlbumID" placeholder="Updated Album ID" required>
-        <button type="submit">Update Artist Album Relationship</button>
-      </form>
+    <!-- Output for user friend operations -->
+    <div id="user-friend-output"></div>
+  </section>
 
-      <form id="delete-artist-album-form">
-        <input type="text" name="artistId" placeholder="Artist ID" required>
-        <input type="text" name="albumId" placeholder="Album ID" required>
-        <button type="submit">Delete Artist Album Relationship</button>
-      </form>
+  <!-- Streaming Platform Songs Management -->
+  <section id="platform-song-management">
+    <h2>Streaming Platform Songs Management</h2>
 
-      <div id="artist-album-output"></div>
-    </section>
+    <!-- Create Platform Song -->
+    <form id="create-platform-song-form">
+      <input type="text" name="streamingPlatformId" placeholder="Platform ID" required>
+      <input type="text" name="songId" placeholder="Song ID" required>
+      <button type="submit">Add Song to Platform</button>
+    </form>
+
+    <!-- Delete Platform Song -->
+    <form id="delete-platform-song-form">
+      <input type="text" name="streamingPlatformId" placeholder="Platform ID" required>
+      <input type="text" name="songId" placeholder="Song ID" required>
+      <button type="submit">Remove Song from Platform</button>
+    </form>
+
+    <!-- Output for platform song operations -->
+    <div id="platform-song-output"></div>
   </section>
 </body>
 

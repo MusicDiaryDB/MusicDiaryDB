@@ -9,14 +9,19 @@ document.addEventListener("DOMContentLoaded", function () {
     { name: "artist", idField: "artistId" },
     { name: "review", idField: "reviewId" },
     {
-      name: "user-review",
-      idField: ["userId", "reviewId"],
-      basePath: "user_review",
+      name: "report-entry",
+      idField: ["reportId", "entryId"],
+      basePath: "report_entry",
     },
     {
-      name: "artist-album",
-      idField: ["artistId", "albumId"],
-      basePath: "artist_album",
+      name: "user-friend",
+      idField: ["userId", "friendUserId"],
+      basePath: "user_friend",
+    },
+    {
+      name: "platform-song",
+      idField: ["streamingPlatformId", "songId"],
+      basePath: "platform_song",
     },
   ];
 
