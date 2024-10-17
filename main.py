@@ -203,17 +203,13 @@ def delete_platform(platform_id) -> Any:
 # ============================
 
 
-# POST /review/:songId - Create a review for a song
-@app.route("/review/<int:song_id>", methods=["POST"])
-def create_review(song_id) -> Any:
-    data = request.form.to_dict()
-    data["songId"] = song_id
+@app.route("/review/", methods=["POST"])
+def create_review() -> Any:
     return handle_request(
         "Review", "create", ["contents", "visibility", "songId"], "ReviewID"
     )
 
 
-# PUT /review/:reviewId - Update a review by its ID
 @app.route("/review/<int:review_id>", methods=["PUT"])
 def update_review(review_id) -> Any:
     return handle_request(
@@ -221,7 +217,6 @@ def update_review(review_id) -> Any:
     )
 
 
-# DELETE /review/:reviewId - Delete a review by its ID
 @app.route("/review/<int:review_id>", methods=["DELETE"])
 def delete_review(review_id) -> Any:
     return handle_request("Review", "delete", [], "ReviewID", review_id)
