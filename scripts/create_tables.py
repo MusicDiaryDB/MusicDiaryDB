@@ -56,6 +56,6 @@ if __name__ == "__main__":
 
     if conn:
         create_tables(conn)
-        insert_data(conn)
+        # insert_data(conn)
         conn.close()
         print("Connection closed")
