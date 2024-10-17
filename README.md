@@ -8,6 +8,10 @@ docker compose up
 
 # if the first command doesn't work, you have a different version of docker compose (use this instead):
 docker-compose up
+
+# Create tables
+# (initialize venv if necessary)
+python ./scripts/create_tables.py
 ```
 
 The database will be running on port 5432, and login credentials can be found in [docker-compose.yml](docker-compose.yml).
