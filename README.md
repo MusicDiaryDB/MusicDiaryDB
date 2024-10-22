@@ -31,7 +31,7 @@ Ensure database is running first and run the script (see setup section for more 
 python ./main.py
 ```
 
-The UI will be accessible from [http://localhost:5000](http://localhost:5000).
+The UI will be accessible from [http://localhost:5000](http://localhost:5400).
 
 Table constraints are enforced so some table operations will require other tables to contain entries.
 
