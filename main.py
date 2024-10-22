@@ -23,7 +23,13 @@ def create_user() -> Any:
 
 @app.route("/user/<int:user_id>", methods=["GET"])
 def get_user(user_id) -> Any:
+    if (user_id == "all"):
+        return handle_request("User", "get",[],"*","all")
     return handle_request("User", "get", [], "UserID", user_id)
+
+@app.route("/user/<string:username>", methods=["GET"])
+def get_user_by_username(username) -> Any:
+    return handle_request("User", "get", [], "Username", username)
 
 
 @app.route("/user/<int:user_id>", methods=["PUT"])
@@ -333,4 +339,4 @@ def index() -> Any:
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", debug=True, port=5400)

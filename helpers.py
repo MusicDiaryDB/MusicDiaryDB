@@ -113,6 +113,9 @@ def get_resource(table, identifier, primary_key):
     query = f'SELECT * FROM "{table}" WHERE "{primary_key}" = %s'
     return execute_query(query, (identifier,), fetch_one=True)
 
+def get_all_resources(table, identifier):
+    query = f'SELECT * FROM "{table}"'
+    return execute_query(query, (identifier,), fetch_one=False)
 
 def format_column_name(key):
     return key[0].upper() + key[1:].replace("Id", "ID")
@@ -203,6 +206,8 @@ def handle_request(table, operation, required_fields, primary_key, identifier=No
             return jsonify({"message": f"{table} deleted"}), 200
 
     elif operation.lower() == "get":
+        if identifier == "all":
+            return get_all_resources(table,identifier)
         if isinstance(primary_key, list) and isinstance(identifier, tuple):
             return get_resource_with_multiple_keys(table, primary_key, identifier)
         else:
