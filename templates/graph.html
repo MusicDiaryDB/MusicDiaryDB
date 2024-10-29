@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temporary Graph Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .chart {
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        svg {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4 text-center">Graph Visualizations</h1>
+        
+        <div class="chart">
+            <h2>Total Users</h2>
+            <svg id="totalUsersGraph"></svg>
+        </div>
+        
+        <div class="chart">
+            <h2>Average Visibility Entries</h2>
+            <svg id="avgVisibilityGraph"></svg>
+        </div> 
+        
+        <div class="chart">
+            <h2>Song Release Dates</h2>
+            <svg id="releaseDatesGraph"></svg>
+        </div>
+        
+        <h1 class="my-4 text-center">User Entries Visibility Report</h1>
+        <svg id="visibilityGraph" width="600" height="400"></svg>
+    </div>
+
+    <script src="{{ url_for('static', filename='graph.js') }}"></script>
+</body>
+</html>
