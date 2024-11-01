@@ -155,6 +155,9 @@ def create_album() -> Any:
 def get_album(album_id) -> Any:
     return handle_request("Album", "get", [], "AlbumID", album_id)
 
+@app.route("/album/<string:name>", methods=["GET"])
+def get_album_by_name(name) -> Any:
+    return handle_request("Album", "get", [], "Name", name)
 
 @app.route("/album/<int:album_id>", methods=["PUT"])
 def update_album(album_id) -> Any:
