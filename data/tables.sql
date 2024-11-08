@@ -94,3 +94,11 @@ CREATE TABLE "StreamingPlatformSongs" (
   FOREIGN KEY ("StreamingPlatformID") REFERENCES "StreamingPlatform" ("StreamingPlatformID") ON DELETE CASCADE,
   FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE
 );
+
+CREATE TABLE "UserReviews" (
+  "UserID" INT NOT NULL,
+  "ReviewID" INT NOT NULL,
+  PRIMARY KEY ("UserID", "ReviewID"),
+  FOREIGN KEY ("UserID") REFERENCES "User" ("UserID") ON DELETE CASCADE,
+  FOREIGN KEY ("ReviewID") REFERENCES "Review" ("ReviewID") ON DELETE CASCADE
+);
