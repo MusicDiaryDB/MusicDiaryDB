@@ -81,6 +81,10 @@ def update_song(song_id) -> Any:
 def delete_song(song_id) -> Any:
     return handle_request("Song", "delete", [], "SongID", song_id)
 
+@app.route("/songs/<int:song_id>/reviews", methods=["GET"])
+def get_reviews_for_song(song_id):
+    return handle_request("Review", "get", ["SongID"], "ReviewID", song_id)
+
 
 # ============================
 #     DIARY ENTRY ROUTES
@@ -269,6 +273,11 @@ def delete_review(review_id) -> Any:
     return handle_request("Review", "delete", [], "ReviewID", review_id)
 
 
+@app.route("/user_reviews/<int:user_id>", methods = ["GET"])
+def get_user_friends_public_reviews(user_id) -> Any:
+    query = f'SELECT u."Username", s."Name" AS "songname", r."ReviewID", r."Contents" FROM "User" u JOIN "UserFriends" uf ON u."UserID" = uf."FriendUserID" JOIN "UserReviews" ur ON ur."UserID" = uf."FriendUserID"  JOIN "Review" r ON ur."ReviewID" = r."ReviewID" JOIN "Song" s ON r."SongID" = s."SongID" WHERE uf."UserID" = 13 AND (r."Visibility" = \'Friends\' OR r."Visibility" = \'Public\')'
+    friends_reviews = execute_query(query)
+    return friends_reviews
 # ============================
 #    REPORT ENTRIES ROUTES
 # ============================
@@ -310,11 +319,23 @@ def get_user_friend(user_id, friend_user_id) -> Any:
     )
 
 
+@app.route("/user_friends/<int:user_id>", methods = ["GET"])
+def get_user_friends(user_id) -> Any:
+    print(f"UserID from URL: {user_id}")
+
+    query = f'SELECT u."UserID", u."Username" FROM "User" u JOIN "UserFriends" uf ON u."UserID" = uf."FriendUserID" WHERE uf."UserID" = {user_id};'
+    friends = execute_query(query)
+    print(friends)
+    return friends
+
+
+
 @app.route("/user_friend/<int:user_id>/<int:friend_user_id>", methods=["DELETE"])
 def delete_user_friend(user_id, friend_user_id) -> Any:
     return delete_resource_with_multiple_keys(
         "UserFriends", ["UserID", "FriendUserID"], (user_id, friend_user_id)
     )
+
 
 
 # ============================
@@ -488,7 +509,7 @@ def users_with_most_entries_report():
 @app.route("/report/user_count_by_visibility", methods =["GET"])
 def user_count_by_visibility_report():
     query ="""
-    SELECT "Visibility", COUNT(DISTINCT "UserID) AS user_count
+    SELECT "Visibility", COUNT(DISTINCT "UserID") AS user_count
     FROM "DiaryEntry"
     GROUP BY "Visibility";
     """
