@@ -168,6 +168,9 @@ def create_album() -> Any:
 def get_album(album_id) -> Any:
     return handle_request("Album", "get", [], "AlbumID", album_id)
 
+@app.route("/album/<string:name>", methods=["GET"])
+def get_album_by_name(name) -> Any:
+    return handle_request("Album", "get", [], "Name", name)
 
 @app.route("/album/<int:album_id>", methods=["PUT"])
 def update_album(album_id) -> Any:
@@ -192,6 +195,10 @@ def create_artist() -> Any:
 @app.route("/artist/<int:artist_id>", methods=["GET"])
 def get_artist(artist_id) -> Any:
     return handle_request("Artist", "get", [], "ArtistID", artist_id)
+
+@app.route("/artist/<string:name>", methods=["GET"])
+def get_artist_by_name(name) -> Any:
+    return handle_request("Artist", "get", [], "Name", name)
 
 
 @app.route("/artist/<int:artist_id>", methods=["PUT"])
