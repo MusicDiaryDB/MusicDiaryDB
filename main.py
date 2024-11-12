@@ -6,6 +6,8 @@ from helpers import (
     delete_resource_with_multiple_keys,
     # update_resource_with_multiple_keys,
 )
+
+from routes.admin_endpoints import bp as admin_blueprint
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -27,7 +29,9 @@ def graphs():
 
 @app.route("/user/", methods=["POST"])
 def create_user() -> Any:
-    return handle_request("User", "create", ["username", "visibility"], "UserID")
+    return handle_request(
+        "User", "create", ["username", "visibility", "password"], "UserID"
+    )
 
 
 @app.route("/user/<int:user_id>", methods=["GET"])
@@ -45,7 +49,7 @@ def get_user_by_username(username) -> Any:
 @app.route("/user/<int:user_id>", methods=["PUT"])
 def update_user(user_id) -> Any:
     return handle_request(
-        "User", "update", ["username", "visibility"], "UserID", user_id
+        "User", "update", ["username", "visibility", "password"], "UserID", user_id
     )
 
 
@@ -538,5 +542,9 @@ def user_count_by_visibility_report():
     return jsonify(result)
 
 
+# register admin related endpoints
+app.register_blueprint(admin_blueprint)
+
+# Run application
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5400)
