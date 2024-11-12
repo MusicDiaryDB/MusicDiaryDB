@@ -13,7 +13,7 @@ bp = Blueprint("user", __name__)
 @bp.route("/user/", methods=["POST"])
 def create_user() -> Any:
     return handle_request(
-        "User", "create", ["username", "visibility", "password"], "UserID"
+        "User", "create", ["username", "visibility", "password", "isAdmin"], "UserID"
     )
 
 
@@ -32,7 +32,11 @@ def get_user_by_username(username) -> Any:
 @bp.route("/user/<int:user_id>", methods=["PUT"])
 def update_user(user_id) -> Any:
     return handle_request(
-        "User", "update", ["username", "visibility", "password"], "UserID", user_id
+        "User",
+        "update",
+        ["username", "visibility", "password", "isAdmin"],
+        "UserID",
+        user_id,
     )
 
 
