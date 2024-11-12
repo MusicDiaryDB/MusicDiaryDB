@@ -12,13 +12,13 @@ app = Flask(__name__)
 CORS(app)
 
 
-
 # ============================
 #  HTML LINKED FILES ROUTES
 # ============================
 @app.route("/graphs")
 def graphs():
     return render_template("graph.html")
+
 
 # ============================
 #         USER ROUTES
@@ -32,9 +32,10 @@ def create_user() -> Any:
 
 @app.route("/user/<int:user_id>", methods=["GET"])
 def get_user(user_id) -> Any:
-    if (user_id == "all"):
-        return handle_request("User", "get",[],"*","all")
+    if user_id == "all":
+        return handle_request("User", "get", [], "*", "all")
     return handle_request("User", "get", [], "UserID", user_id)
+
 
 @app.route("/user/<string:username>", methods=["GET"])
 def get_user_by_username(username) -> Any:
@@ -80,6 +81,7 @@ def update_song(song_id) -> Any:
 @app.route("/song/<int:song_id>", methods=["DELETE"])
 def delete_song(song_id) -> Any:
     return handle_request("Song", "delete", [], "SongID", song_id)
+
 
 @app.route("/songs/<int:song_id>/reviews", methods=["GET"])
 def get_reviews_for_song(song_id):
@@ -168,9 +170,11 @@ def create_album() -> Any:
 def get_album(album_id) -> Any:
     return handle_request("Album", "get", [], "AlbumID", album_id)
 
+
 @app.route("/album/<string:name>", methods=["GET"])
 def get_album_by_name(name) -> Any:
     return handle_request("Album", "get", [], "Name", name)
+
 
 @app.route("/album/<int:album_id>", methods=["PUT"])
 def update_album(album_id) -> Any:
@@ -195,6 +199,7 @@ def create_artist() -> Any:
 @app.route("/artist/<int:artist_id>", methods=["GET"])
 def get_artist(artist_id) -> Any:
     return handle_request("Artist", "get", [], "ArtistID", artist_id)
+
 
 @app.route("/artist/<string:name>", methods=["GET"])
 def get_artist_by_name(name) -> Any:
@@ -273,11 +278,13 @@ def delete_review(review_id) -> Any:
     return handle_request("Review", "delete", [], "ReviewID", review_id)
 
 
-@app.route("/user_reviews/<int:user_id>", methods = ["GET"])
+@app.route("/user_reviews/<int:user_id>", methods=["GET"])
 def get_user_friends_public_reviews(user_id) -> Any:
-    query = f'SELECT u."Username", s."Name" AS "songname", r."ReviewID", r."Contents" FROM "User" u JOIN "UserFriends" uf ON u."UserID" = uf."FriendUserID" JOIN "UserReviews" ur ON ur."UserID" = uf."FriendUserID"  JOIN "Review" r ON ur."ReviewID" = r."ReviewID" JOIN "Song" s ON r."SongID" = s."SongID" WHERE uf."UserID" = 13 AND (r."Visibility" = \'Friends\' OR r."Visibility" = \'Public\')'
+    query = 'SELECT u."Username", s."Name" AS "songname", r."ReviewID", r."Contents" FROM "User" u JOIN "UserFriends" uf ON u."UserID" = uf."FriendUserID" JOIN "UserReviews" ur ON ur."UserID" = uf."FriendUserID"  JOIN "Review" r ON ur."ReviewID" = r."ReviewID" JOIN "Song" s ON r."SongID" = s."SongID" WHERE uf."UserID" = 13 AND (r."Visibility" = \'Friends\' OR r."Visibility" = \'Public\')'
     friends_reviews = execute_query(query)
     return friends_reviews
+
+
 # ============================
 #    REPORT ENTRIES ROUTES
 # ============================
@@ -319,15 +326,15 @@ def get_user_friend(user_id, friend_user_id) -> Any:
     )
 
 
-@app.route("/user_friends/<int:user_id>", methods = ["GET"])
+@app.route("/user_friends/<int:user_id>", methods=["GET"])
 def get_user_friends(user_id) -> Any:
     print(f"UserID from URL: {user_id}")
 
-    query = f'SELECT u."UserID", u."Username" FROM "User" u JOIN "UserFriends" uf ON u."UserID" = uf."FriendUserID" WHERE uf."UserID" = {user_id};'
+    query = f'SELECT u."UserID", u."Username" FROM "User" u JOIN "UserFriends" uf ON u."UserID" = uf."FriendUserID" WHERE uf."UserID" = {
+        user_id};'
     friends = execute_query(query)
     print(friends)
     return friends
-
 
 
 @app.route("/user_friend/<int:user_id>/<int:friend_user_id>", methods=["DELETE"])
@@ -335,7 +342,6 @@ def delete_user_friend(user_id, friend_user_id) -> Any:
     return delete_resource_with_multiple_keys(
         "UserFriends", ["UserID", "FriendUserID"], (user_id, friend_user_id)
     )
-
 
 
 # ============================
@@ -379,28 +385,32 @@ def index() -> Any:
 #  AGGREGATE REPORT ROUTES
 # ============================
 
-@app.route("/report/total_users", methods = ["GET"])
+
+@app.route("/report/total_users", methods=["GET"])
 def total_users_reports():
-    query = "SELECT COUNT(*) AS total_users FROM \"Users\";"
+    query = 'SELECT COUNT(*) AS total_users FROM "Users";'
     result = execute_query(query, fetch_one=True)
     return jsonify(result)
 
-@app.route("/report/avg_visibility_entries", methods = ["GET"])
+
+@app.route("/report/avg_visibility_entries", methods=["GET"])
 def avg_visability_entries_report():
     query = """
-    SELECT AVG(CASE WHEN \"Visibility\" = 'public' THEN 1 ELSE 0 END) AS avg_public_entries 
+    SELECT AVG(CASE WHEN \"Visibility\" = 'public' THEN 1 ELSE 0 END) AS avg_public_entries
     FROM \"DiaryEntry\";
     """
-    result = execute_query(query, fetch_one = True)
+    result = execute_query(query, fetch_one=True)
     return jsonify(result)
+
 
 @app.route("/report/song_release_dates", methods=["GET"])
 def song_release_dates_report():
-    query = "SELECT MIN(\"ReleaseDate\") AS earliest_song, MAX(\"ReleaseDate\") AS latest_song FROM \"Song\";"
+    query = 'SELECT MIN("ReleaseDate") AS earliest_song, MAX("ReleaseDate") AS latest_song FROM "Song";'
     result = execute_query(query, fetch_one=True)
     return jsonify(result)
 
-@app.route("/report/reviews_per_song", methods = ["GET"])
+
+@app.route("/report/reviews_per_song", methods=["GET"])
 def reviews_per_song_report():
     query = """
     SELECT \"SongID\", COUNT(*) AS total_reviews, AVG(CASE WHEN \"Visibility\" = 'public' THEN 1 ELSE 0 END) AS avg_rating
@@ -410,7 +420,8 @@ def reviews_per_song_report():
     result = execute_query(query)
     return jsonify(result)
 
-@app.route("/report/entries_by_date", methods = ["GET"])
+
+@app.route("/report/entries_by_date", methods=["GET"])
 def entries_by_date_report():
     query = """
     SELECT "Date", COUNT(*) AS entry_count
@@ -420,6 +431,7 @@ def entries_by_date_report():
     """
     result = execute_query(query)
     return jsonify(result)
+
 
 @app.route("/report/friend_counts", methods=["GET"])
 def friend_counts_report():
@@ -431,7 +443,8 @@ def friend_counts_report():
     result = execute_query(query)
     return jsonify(result)
 
-@app.route("/report/visibilty_count_entries", methods = ["GET"])
+
+@app.route("/report/visibilty_count_entries", methods=["GET"])
 def visibility_count_entries_report():
     query = """
     SELECT "Visibility", COUNT(*) AS count
@@ -441,7 +454,8 @@ def visibility_count_entries_report():
     result = execute_query(query)
     return jsonify(result)
 
-@app.route("/report/avg_rating_per_song", methods = ["GET"])
+
+@app.route("/report/avg_rating_per_song", methods=["GET"])
 def avg_rating_per_song_report():
     query = """
     SELECT "SongID", AVG(CASE WHEN "Visibility" = 'public' THEN 1 ELSE 0 END) AS avg_rating
@@ -450,8 +464,9 @@ def avg_rating_per_song_report():
     """
     result = execute_query(query)
     return jsonify(result)
-    
-@app.route("/report/most_reviewed_songs", methods = ["GET"])
+
+
+@app.route("/report/most_reviewed_songs", methods=["GET"])
 def most_reviewed_songs_report():
     query = """
     SELECT "SongID", COUNT(*) AS review_count
@@ -463,12 +478,14 @@ def most_reviewed_songs_report():
     result = execute_query(query)
     return jsonify(result)
 
+
 # ============================
 #  AGGREGATE REPORT ROUTES
 #  WITH SUBQUERIES AND JOINS
 # ============================
 
-@app.route("/report/songs_released_by_artist", methods = ["GET"])
+
+@app.route("/report/songs_released_by_artist", methods=["GET"])
 def songs_released_by_artist_report():
     query = """
     SELECT a."ArtistID", a."Name",
@@ -479,18 +496,20 @@ def songs_released_by_artist_report():
     result = execute_query(query)
     return jsonify(result)
 
-@app.route("/report/avg_review_score_multiple_reviews", methods = ["GET"])
+
+@app.route("/report/avg_review_score_multiple_reviews", methods=["GET"])
 def avg_review_score_multiple_reviews_report():
     query = """
     SELECT "SongID", AVG("Rating") AS avg_rating
     FROM "Review"
     WHERE "SongID" IN (SELECT "SongID" FROM "Review" GROUP BY "SongID" HAVING COUNT(*) > 1)
-    GROUP BY "SongID";    
+    GROUP BY "SongID";
     """
     result = execute_query(query)
     return jsonify(result)
 
-@app.route("/report/users_with_most_entries", methods = ["GET"])
+
+@app.route("/report/users_with_most_entries", methods=["GET"])
 def users_with_most_entries_report():
     query = """
     SELECT u."UserID", u."Username", COUNT(d."EntryID") AS total_entries
@@ -502,19 +521,22 @@ def users_with_most_entries_report():
     result = execute_query(query)
     return jsonify(result)
 
+
 # ============================
 #  GRAPH FUNCTIONALITY ROUTES
 # ============================
 
-@app.route("/report/user_count_by_visibility", methods =["GET"])
+
+@app.route("/report/user_count_by_visibility", methods=["GET"])
 def user_count_by_visibility_report():
-    query ="""
+    query = """
     SELECT "Visibility", COUNT(DISTINCT "UserID") AS user_count
     FROM "DiaryEntry"
     GROUP BY "Visibility";
     """
     result = execute_query(query)
     return jsonify(result)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5400)

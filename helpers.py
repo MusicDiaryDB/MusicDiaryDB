@@ -113,9 +113,11 @@ def get_resource(table, identifier, primary_key):
     query = f'SELECT * FROM "{table}" WHERE "{primary_key}" = %s'
     return execute_query(query, (identifier,), fetch_one=True)
 
+
 def get_all_resources(table, identifier):
     query = f'SELECT * FROM "{table}"'
     return execute_query(query, (identifier,), fetch_one=False)
+
 
 def format_column_name(key):
     return key[0].upper() + key[1:].replace("Id", "ID")
@@ -195,7 +197,7 @@ def handle_request(table, operation, required_fields, primary_key, identifier=No
             if result is None or result == 0:
                 return jsonify({"error": f"{table} update failed"}), 404
             return jsonify({"message": f"{table} updated"}), 200
-        
+
     elif operation.lower() == "delete":
         if isinstance(primary_key, list) and isinstance(identifier, tuple):
             return delete_resource_with_multiple_keys(table, primary_key, identifier)
@@ -208,25 +210,29 @@ def handle_request(table, operation, required_fields, primary_key, identifier=No
     elif operation.lower() == "get":
         print("HERE")
         if identifier == "all":
-            return get_all_resources(table,identifier)
+            return get_all_resources(table, identifier)
         if isinstance(primary_key, list) and isinstance(identifier, tuple):
             return get_resource_with_multiple_keys(table, primary_key, identifier)
         if isinstance(primary_key, list) and identifier == "all":
-            return get_all_resources_by_key(table, primary_key[0], primary_key_value=identifier[0])
+            return get_all_resources_by_key(
+                table, primary_key[0], primary_key_value=identifier[0]
+            )
         else:
             resource = get_resource(table, identifier, primary_key)
             if resource is None:
                 return jsonify({"error": f"{table} not found"}), 404
             return jsonify(resource), 200
 
+
 def get_reviews_for_song(song_id):
-    query ="""
+    query = """
     SELECT r."ReviewID", r."Contents", r."Visibility", u."Username"
     FROM "Review" r
     JOIN "User" u ON r."UserID" = u."UserID"
     WHERE r."SongID" = %s AND r."Visibility" = 'PUBLIC'
     """
     return execute_query(query, (song_id,))
+
 
 def get_all_resources_by_key(table, key, primary_key_value):
     query = f"SELECT * FROM {table} WHERE {key} = %s"
