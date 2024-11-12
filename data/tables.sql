@@ -30,7 +30,6 @@ CREATE TABLE "Album" (
 -- Song table
 CREATE TABLE "Song" (
     "SongID" SERIAL PRIMARY KEY,
-    "ReleaseDate" DATE NOT NULL,
     "Name" TEXT NOT NULL,
     "AlbumID" INT,
     FOREIGN KEY ("AlbumID") REFERENCES "Album" ("AlbumID") ON DELETE CASCADE

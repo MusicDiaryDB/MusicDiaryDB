@@ -208,7 +208,6 @@ def handle_request(table, operation, required_fields, primary_key, identifier=No
             return jsonify({"message": f"{table} deleted"}), 200
 
     elif operation.lower() == "get":
-        print("HERE")
         if identifier == "all":
             return get_all_resources(table, identifier)
         if isinstance(primary_key, list) and isinstance(identifier, tuple):
