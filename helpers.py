@@ -238,3 +238,14 @@ def get_all_resources_by_key(table, key, primary_key_value):
     cursor.execute(query, (primary_key_value,))
     results = cursor.fetchall()
     return jsonify(results), 200
+
+
+def check_query_result(result):
+    if result is None or result == 0:
+        return jsonify({"error": "Table update failed"}), 500
+    return jsonify({"result": result}), 200
+
+
+# Use this over 'execute_query' if you are directly returning the result
+def execute_query_ret_result(query, params=None):
+    return check_query_result(execute_query(query, params))
