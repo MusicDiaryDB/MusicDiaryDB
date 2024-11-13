@@ -173,7 +173,12 @@ def handle_request(table, operation, required_fields, primary_key, identifier=No
 
     data = request.form
     params = {field: data.get(field) for field in required_fields}
-    print(params)
+
+    # special case for setting create user
+    if table == "User":
+        if params.get("isAdmin") is None:
+            params["isAdmin"] = "false"
+
     if any(value is None for value in params.values()):
         missing_fields = [field for field in params if params[field] is None]
         return jsonify({"error": f"Missing fields: {missing_fields}"}), 400

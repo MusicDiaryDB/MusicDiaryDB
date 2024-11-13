@@ -4,7 +4,7 @@ CREATE TABLE "User" (
     "Username" VARCHAR(255) NOT NULL UNIQUE,
     "Visibility" VARCHAR(255) NOT NULL,
     "Password" VARCHAR(255) NOT NULL,
-    "IsAdmin" boolean
+    "IsAdmin" boolean DEFAULT FALSE
 );
 
 -- Artist table
