@@ -1,6 +1,6 @@
 from typing import Any
 from flask import Blueprint
-from helpers import execute_query_ret_result
+from helpers import execute_query_ret_result, execute_query
 
 bp = Blueprint("admin", __name__)
 
@@ -54,6 +54,9 @@ def generate_managerial_report():
 
 @bp.route("/admin/info/rows", methods=["GET"])
 def get_db_info() -> Any:
+    # This query relies on up to data schema information
+    # Analyze query must be run or it will likely be out-of-date
+    execute_query("ANALYZE;")
     query = """
     SELECT
         schemaname AS schema,
