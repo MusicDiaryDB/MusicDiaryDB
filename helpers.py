@@ -1,6 +1,7 @@
+from typing import Tuple
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from flask import request, jsonify
+from flask import request, jsonify, Response
 
 
 def create_connection():
@@ -166,10 +167,13 @@ def get_resource_with_multiple_keys(table, primary_keys, identifiers):
     return jsonify(result), 200
 
 
-def handle_request(table, operation, required_fields, primary_key, identifier=None):
+def handle_request(
+    table, operation, required_fields, primary_key, identifier=None
+) -> Tuple[Response | None, int]:
     print(
         f"Request received: {table}, {operation}, {required_fields}, {primary_key}, {identifier}"
     )
+    print(request)
 
     data = request.form
     params = {field: data.get(field) for field in required_fields}
@@ -226,6 +230,7 @@ def handle_request(table, operation, required_fields, primary_key, identifier=No
             if resource is None:
                 return jsonify({"error": f"{table} not found"}), 404
             return jsonify(resource), 200
+    return None, 404
 
 
 def get_reviews_for_song(song_id):

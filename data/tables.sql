@@ -10,7 +10,7 @@ CREATE TABLE "User" (
 -- Artist table
 CREATE TABLE "Artist" (
     "ArtistID" SERIAL PRIMARY KEY,
-    "Name" VARCHAR(255) NOT NULL
+    "Name" VARCHAR(255) NOT NULL UNIQUE
 );
 
 -- StreamingPlatform table
@@ -24,7 +24,8 @@ CREATE TABLE "Album" (
     "AlbumID" SERIAL PRIMARY KEY,
     "Name" VARCHAR(255) NOT NULL,
     "ArtistID" INT NOT NULL,
-    FOREIGN KEY ("ArtistID") REFERENCES "Artist" ("ArtistID") ON DELETE CASCADE
+    FOREIGN KEY ("ArtistID") REFERENCES "Artist" ("ArtistID") ON DELETE CASCADE,
+    CONSTRAINT unique_album_artist UNIQUE ("ArtistID", "Name")
 );
 
 -- Song table
@@ -32,7 +33,8 @@ CREATE TABLE "Song" (
     "SongID" SERIAL PRIMARY KEY,
     "Name" TEXT NOT NULL,
     "AlbumID" INT,
-    FOREIGN KEY ("AlbumID") REFERENCES "Album" ("AlbumID") ON DELETE CASCADE
+    FOREIGN KEY ("AlbumID") REFERENCES "Album" ("AlbumID") ON DELETE CASCADE,
+    CONSTRAINT unique_song_album UNIQUE ("AlbumID", "Name")
 );
 
 

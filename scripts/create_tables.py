@@ -23,7 +23,6 @@ def create_tables(conn):
     create_users_table: str
     with open("data/tables.sql") as f:
         create_users_table = str(f.read())
-        # print(create_users_table)
 
     try:
         with conn.cursor() as cur:
@@ -35,27 +34,10 @@ def create_tables(conn):
         conn.rollback()
 
 
-def insert_data(conn):
-    insert_data: str
-    with open("data/fake-data.sql") as f:
-        insert_data = str(f.read())
-        # print(insert_data)
-
-    try:
-        with conn.cursor() as cur:
-            cur.execute(insert_data)
-            conn.commit()
-            print("Inserted data successfully")
-    except Exception as e:
-        print(f"Error inserting data: {e}")
-        conn.rollback()
-
-
 if __name__ == "__main__":
     conn = create_connection()
 
     if conn:
         create_tables(conn)
-        # insert_data(conn)
         conn.close()
         print("Connection closed")

@@ -1,5 +1,5 @@
 from typing import Any
-from flask import Blueprint
+from flask import Blueprint, request
 from helpers import execute_query_ret_result, execute_query
 
 bp = Blueprint("admin", __name__)
@@ -12,6 +12,7 @@ bp = Blueprint("admin", __name__)
 # Make a user into an admin user
 @bp.route("/admin/add/<string:username>", methods=["PUT"])
 def make_user_admin(username):
+    print(request)
     query = """
     UPDATE "User"
     SET "IsAdmin" = TRUE
@@ -23,6 +24,7 @@ def make_user_admin(username):
 # Remove admin status from a user
 @bp.route("/admin/remove/<string:username>", methods=["PUT"])
 def remove_user_admin(username):
+    print(request)
     query = """
     UPDATE "User"
     SET "IsAdmin" = FALSE
@@ -40,6 +42,7 @@ def remove_user_admin(username):
 @bp.route("/admin/report", methods=["GET"])
 def generate_managerial_report():
     # TODO: aggregation queries?
+    print(request)
     return {}
 
 
@@ -54,6 +57,7 @@ def generate_managerial_report():
 
 @bp.route("/admin/info/rows", methods=["GET"])
 def get_db_info() -> Any:
+    print(request)
     # This query relies on up to data schema information
     # Analyze query must be run or it will likely be out-of-date
     execute_query("ANALYZE;")
@@ -72,6 +76,7 @@ def get_db_info() -> Any:
 
 @bp.route("/admin/info/dbsize", methods=["GET"])
 def get_db_size() -> Any:
+    print(request)
     query = (
         "SELECT pg_size_pretty(pg_database_size(current_database())) AS database_size;"
     )
@@ -80,6 +85,7 @@ def get_db_size() -> Any:
 
 @bp.route("/admin/info/tablesize", methods=["GET"])
 def get_table_sizes():
+    print(request)
     query = """
     SELECT
         schemaname AS schema,
@@ -95,6 +101,7 @@ def get_table_sizes():
 
 @bp.route("/admin/info/conns", methods=["GET"])
 def get_info_num_conns():
+    print(request)
     query = """
     SELECT
         count(*) AS total_connections
@@ -106,6 +113,7 @@ def get_info_num_conns():
 
 @bp.route("/admin/info/conns-activity", methods=["GET"])
 def get_info_conns_activity():
+    print(request)
     query = """
     SELECT
         state,
@@ -125,12 +133,14 @@ def get_info_conns_activity():
 
 @bp.route("/admin/perf/cache-hit-ratio", methods=["GET"])
 def get_perf_cache_hit_ratios():
+    print(request)
     query = "SELECT sum(blks_hit) / (sum(blks_hit) + sum(blks_read)) AS cache_hit_ratio FROM pg_stat_database;"
     return execute_query_ret_result(query)
 
 
 @bp.route("/admin/perf/long-running-queries", methods=["GET"])
 def get_perf_long_running_queries():
+    print(request)
     query = """
     SELECT
         pid,
