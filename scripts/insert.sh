@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Note: This script is mainly just for testing, use 'populate_*.py' scripts instead to populate database
+
 #
 # add artists
 #

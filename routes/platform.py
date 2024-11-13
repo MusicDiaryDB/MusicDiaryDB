@@ -23,6 +23,11 @@ def get_platform(platform_id) -> Any:
     )
 
 
+@bp.route("/platform/<string:name>", methods=["GET"])
+def get_platform_by_name(name) -> Any:
+    return handle_request("StreamingPlatform", "get", [], "Name", name)
+
+
 @bp.route("/platform/<int:platform_id>", methods=["PUT"])
 def update_platform(platform_id) -> Any:
     return handle_request(

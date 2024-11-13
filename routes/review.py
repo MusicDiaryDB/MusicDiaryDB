@@ -38,27 +38,3 @@ def get_user_friends_public_reviews(user_id) -> Any:
     query = 'SELECT u."Username", s."Name" AS "songname", r."ReviewID", r."Contents" FROM "User" u JOIN "UserFriends" uf ON u."UserID" = uf."FriendUserID" JOIN "UserReviews" ur ON ur."UserID" = uf."FriendUserID"  JOIN "Review" r ON ur."ReviewID" = r."ReviewID" JOIN "Song" s ON r."SongID" = s."SongID" WHERE uf."UserID" = %s AND (r."Visibility" = \'Friends\' OR r."Visibility" = \'Public\')'
     friends_reviews = execute_query(query, (user_id,))
     return friends_reviews
-
-
-# ============================
-#    REPORT ENTRIES ROUTES
-# ============================
-
-
-@bp.route("/report_entry/", methods=["POST"])
-def create_report_entry() -> Any:
-    return handle_request("ReportEntries", "create", ["reportId", "entryId"], None)
-
-
-@bp.route("/report_entry/<int:report_id>/<int:entry_id>", methods=["GET"])
-def get_report_entry(report_id, entry_id) -> Any:
-    return handle_request(
-        "ReportEntries", "get", [], ["ReportID", "EntryID"], (report_id, entry_id)
-    )
-
-
-@bp.route("/report_entry/<int:report_id>/<int:entry_id>", methods=["DELETE"])
-def delete_report_entry(report_id, entry_id) -> Any:
-    return delete_resource_with_multiple_keys(
-        "ReportEntries", ["ReportID", "EntryID"], (report_id, entry_id)
-    )

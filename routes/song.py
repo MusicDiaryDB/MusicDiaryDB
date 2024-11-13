@@ -41,6 +41,11 @@ def get_song(song_id) -> Any:
     return handle_request("Song", "get", [], "SongID", song_id)
 
 
+@bp.route("/song/<string:name>", methods=["GET"])
+def get_song_by_name(name) -> Any:
+    return handle_request("Song", "get", [], "Name", name)
+
+
 @bp.route("/song/<int:song_id>", methods=["PUT"])
 def update_song(song_id) -> Any:
     return handle_request("Song", "update", ["name", "albumId"], "SongID", song_id)

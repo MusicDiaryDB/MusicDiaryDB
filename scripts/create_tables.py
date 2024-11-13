@@ -34,10 +34,9 @@ def create_tables(conn):
         conn.rollback()
 
 
-if __name__ == "__main__":
-    conn = create_connection()
+conn = create_connection()
 
-    if conn:
-        create_tables(conn)
-        conn.close()
-        print("Connection closed")
+if conn:
+    create_tables(conn)
+    conn.close()
+    print("Connection closed")

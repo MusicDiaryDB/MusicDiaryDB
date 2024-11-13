@@ -16,7 +16,7 @@ CREATE TABLE "Artist" (
 -- StreamingPlatform table
 CREATE TABLE "StreamingPlatform" (
     "StreamingPlatformID" SERIAL PRIMARY KEY,
-    "Name" VARCHAR(255) NOT NULL
+    "Name" VARCHAR(255) NOT NULL UNIQUE
 );
 
 -- Album table
@@ -47,7 +47,8 @@ CREATE TABLE "DiaryEntry" (
     "UserID" INT NOT NULL,
     "SongID" INT NOT NULL,
     FOREIGN KEY ("UserID") REFERENCES "User" ("UserID") ON DELETE CASCADE,
-    FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE
+    FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE,
+    CONSTRAINT unique_user_song UNIQUE ("UserID", "SongID")
 );
 
 -- DiaryReport table
@@ -96,12 +97,4 @@ CREATE TABLE "StreamingPlatformSongs" (
     PRIMARY KEY ("StreamingPlatformID", "SongID"),
     FOREIGN KEY ("StreamingPlatformID") REFERENCES "StreamingPlatform" ("StreamingPlatformID") ON DELETE CASCADE,
     FOREIGN KEY ("SongID") REFERENCES "Song" ("SongID") ON DELETE CASCADE
-);
-
-CREATE TABLE "UserReviews" (
-    "UserID" INT NOT NULL,
-    "ReviewID" INT NOT NULL,
-    PRIMARY KEY ("UserID", "ReviewID"),
-    FOREIGN KEY ("UserID") REFERENCES "User" ("UserID") ON DELETE CASCADE,
-    FOREIGN KEY ("ReviewID") REFERENCES "Review" ("ReviewID") ON DELETE CASCADE
 );
