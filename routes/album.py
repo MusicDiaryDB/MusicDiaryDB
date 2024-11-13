@@ -40,10 +40,7 @@ def get_album(album_id) -> Any:
 
 @bp.route("/album/<string:name>", methods=["GET"])
 def get_album_by_name(name) -> Any:
-    res, status = handle_request("Album", "get", [], "Name", name)
-    if res is not None:
-        print(res.get_json()["ArtistID"])
-    return res, status
+    return handle_request("Album", "get", [], "Name", name)
 
 
 @bp.route("/album/<int:album_id>", methods=["PUT"])

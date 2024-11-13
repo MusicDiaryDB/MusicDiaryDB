@@ -18,7 +18,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the port the app runs on (adjust if necessary)
-EXPOSE 5000
+EXPOSE 5400
+
+# populate database with sample data
+RUN python scripts/setup.py
 
 # Command to run the application
 CMD ["python", "main.py"]
