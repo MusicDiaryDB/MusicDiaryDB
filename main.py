@@ -464,21 +464,18 @@ def most_reviewed_songs_report():
 @app.route("/report/songs_released_by_artist", methods = ["GET"])
 def songs_released_by_artist_report():
     query = """
-    SELECT a."ArtistID", a."Name",
-    (SELECT COUNT(*) FROM "Song" s WHERE s."AlbumID" IN
-    (SELECT "AlbumID" FROM "Album" WHERE "ArtistID" = a."ArtistID")) AS total_songs
-    FROM "Artist" a;
-    """
-    result = execute_query(query)
-    return jsonify(result)
-
-@app.route("/report/avg_review_score_multiple_reviews", methods = ["GET"])
-def avg_review_score_multiple_reviews_report():
-    query = """
-    SELECT "SongID", AVG("Rating") AS avg_rating
-    FROM "Review"
-    WHERE "SongID" IN (SELECT "SongID" FROM "Review" GROUP BY "SongID" HAVING COUNT(*) > 1)
-    GROUP BY "SongID";    
+    SELECT 
+    al."Name" AS album_name,
+    COUNT(s."SongID") AS total_songs
+    FROM 
+    "AlbumSongs" s
+    JOIN 
+    "Album" al ON s."AlbumID" = al."AlbumID"
+    GROUP BY 
+    al."Name"
+    ORDER BY 
+    total_songs DESC
+    LIMIT 5;
     """
     result = execute_query(query)
     return jsonify(result)
@@ -506,8 +503,15 @@ def user_count_by_visibility_report():
     FROM "DiaryEntry"
     GROUP BY "Visibility";
     """
+    print("apple")
     result = execute_query(query)
-    return jsonify(result)
+    if result is None or len(result) == 0:
+        print("No data returned from the query.")
+    # Convert RealDictRow objects to regular dictionaries
+    formatted_result = [dict(row) for row in result] if result else []
+    print(formatted_result)    
+    # Return the result as JSON
+    return jsonify(formatted_result)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5400)
