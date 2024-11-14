@@ -1,6 +1,7 @@
+from typing import Tuple
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from flask import request, jsonify
+from flask import request, jsonify, Response
 
 
 def create_connection():
@@ -113,9 +114,11 @@ def get_resource(table, identifier, primary_key):
     query = f'SELECT * FROM "{table}" WHERE "{primary_key}" = %s'
     return execute_query(query, (identifier,), fetch_one=True)
 
+
 def get_all_resources(table, identifier):
     query = f'SELECT * FROM "{table}"'
     return execute_query(query, (identifier,), fetch_one=False)
+
 
 def format_column_name(key):
     return key[0].upper() + key[1:].replace("Id", "ID")
@@ -164,14 +167,22 @@ def get_resource_with_multiple_keys(table, primary_keys, identifiers):
     return jsonify(result), 200
 
 
-def handle_request(table, operation, required_fields, primary_key, identifier=None):
+def handle_request(
+    table, operation, required_fields, primary_key, identifier=None
+) -> Tuple[Response | None, int]:
     print(
         f"Request received: {table}, {operation}, {required_fields}, {primary_key}, {identifier}"
     )
+    print(request)
 
     data = request.form
     params = {field: data.get(field) for field in required_fields}
-    print(params)
+
+    # special case for setting create user
+    if table == "User":
+        if params.get("isAdmin") is None:
+            params["isAdmin"] = "false"
+
     if any(value is None for value in params.values()):
         missing_fields = [field for field in params if params[field] is None]
         return jsonify({"error": f"Missing fields: {missing_fields}"}), 400
@@ -195,7 +206,7 @@ def handle_request(table, operation, required_fields, primary_key, identifier=No
             if result is None or result == 0:
                 return jsonify({"error": f"{table} update failed"}), 404
             return jsonify({"message": f"{table} updated"}), 200
-        
+
     elif operation.lower() == "delete":
         if isinstance(primary_key, list) and isinstance(identifier, tuple):
             return delete_resource_with_multiple_keys(table, primary_key, identifier)
@@ -206,21 +217,24 @@ def handle_request(table, operation, required_fields, primary_key, identifier=No
             return jsonify({"message": f"{table} deleted"}), 200
 
     elif operation.lower() == "get":
-        print("HERE")
         if identifier == "all":
-            return get_all_resources(table,identifier)
+            return get_all_resources(table, identifier)
         if isinstance(primary_key, list) and isinstance(identifier, tuple):
             return get_resource_with_multiple_keys(table, primary_key, identifier)
         if isinstance(primary_key, list) and identifier == "all":
-            return get_all_resources_by_key(table, primary_key[0], primary_key_value=identifier[0])
+            return get_all_resources_by_key(
+                table, primary_key[0], primary_key_value=identifier[0]
+            )
         else:
             resource = get_resource(table, identifier, primary_key)
             if resource is None:
                 return jsonify({"error": f"{table} not found"}), 404
             return jsonify(resource), 200
+    return None, 404
+
 
 def get_reviews_for_song(song_id):
-    query ="""
+    query = """
     SELECT r."ReviewID", r."Contents", r."Visibility", u."Username"
     FROM "Review" r
     JOIN "User" u ON r."UserID" = u."UserID"
@@ -228,8 +242,20 @@ def get_reviews_for_song(song_id):
     """
     return execute_query(query, (song_id,))
 
+
 def get_all_resources_by_key(table, key, primary_key_value):
     query = f"SELECT * FROM {table} WHERE {key} = %s"
     cursor.execute(query, (primary_key_value,))
     results = cursor.fetchall()
     return jsonify(results), 200
+
+
+def check_query_result(result):
+    if result is None or result == 0:
+        return jsonify({"error": "Table update failed"}), 500
+    return jsonify({"result": result}), 200
+
+
+# Use this over 'execute_query' if you are directly returning the result
+def execute_query_ret_result(query, params=None):
+    return check_query_result(execute_query(query, params))

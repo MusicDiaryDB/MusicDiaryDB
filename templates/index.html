@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Music Diary Management</title>
-  <link rel="stylesheet" href="/static/css/styles.css">
+  <!-- <link rel="stylesheet" href="/static/css/styles.css"> -->
   <script src="/static/js/script.js" defer></script>
 </head>
 
@@ -15,12 +15,10 @@
   <!-- User Operations -->
   <section id="user">
     <h2>User Management</h2>
-    <nav>
-      <a href="/graphs">View Graphs</a>
-    </nav>
     <!-- Create User -->
     <form id="create-user-form">
       <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
       <input type="text" name="visibility" placeholder="Visibility" required>
       <button type="submit">Create User</button>
     </form>
@@ -30,6 +28,7 @@
       <input type="text" name="userId" placeholder="User ID" required>
       <input type="text" name="username" placeholder="Updated Username">
       <input type="text" name="visibility" placeholder="Updated Visibility" required>
+      <input type="password" name="password" placeholder="Updated Password" required>
       <button type="submit">Update User</button>
     </form>
 
@@ -147,7 +146,7 @@
 
     <!-- Create Song -->
     <form id="create-song-form">
-      <input type="date" name="releaseDate" placeholder="Release Date" required>
+      <!-- <input type="date" name="releaseDate" placeholder="Release Date" required> -->
       <input type="text" name="name" placeholder="Song Name" required>
       <input type="text" name="albumId" placeholder="Album ID" required>
       <button type="submit">Create Song</button>
@@ -156,7 +155,7 @@
     <!-- Update Song -->
     <form id="update-song-form">
       <input type="text" name="songId" placeholder="Song ID" required>
-      <input type="date" name="releaseDate" placeholder="Updated Release Date">
+      <!-- <input type="date" name="releaseDate" placeholder="Updated Release Date"> -->
       <input type="text" name="name" placeholder="Updated Song Name">
       <input type="text" name="albumId" placeholder="Updated Album ID">
       <button type="submit">Update Song</button>
@@ -319,6 +318,13 @@
 
     <!-- Output for platform song operations -->
     <div id="platform-song-output"></div>
+  </section>
+
+  <!-- Graphs -->
+  <section id="graphs">
+    <nav>
+      <a href="/graphs">View Graphs</a>
+    </nav>
   </section>
 </body>
 
