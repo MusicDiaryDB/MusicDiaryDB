@@ -2,6 +2,7 @@ from typing import Any
 from flask import Blueprint
 from helpers import (
     delete_resource_with_multiple_keys,
+    execute_query_ret_result,
     handle_request,
 )
 
@@ -38,6 +39,12 @@ def update_diary_report(report_id: int) -> Any:
 @bp.route("/report/<int:report_id>", methods=["DELETE"])
 def delete_diary_report(report_id: int) -> Any:
     return handle_request("DiaryReport", "delete", [], "ReportID", report_id)
+
+
+@bp.route("/report/user/<int:user_id>", methods=["GET"])
+def get_user_diary_reports(user_id: int) -> Any:
+    query = """SELECT * FROM "DiaryReport" WHERE "UserID" = '%s';"""
+    return execute_query_ret_result(query, (user_id,))
 
 
 # ============================

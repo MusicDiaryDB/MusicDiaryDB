@@ -1,6 +1,6 @@
 from typing import Any
 from flask import Blueprint
-from helpers import handle_request
+from helpers import execute_query_ret_result, handle_request
 
 bp = Blueprint("entry", __name__)
 
@@ -38,3 +38,9 @@ def update_diary_entry(entry_id: int) -> Any:
 @bp.route("/entry/<int:entry_id>", methods=["DELETE"])
 def delete_diary_entry(entry_id: int) -> Any:
     return handle_request("DiaryEntry", "delete", [], "EntryID", entry_id)
+
+
+@bp.route("/entry/user/<int:user_id>", methods=["GET"])
+def get_user_diary_entries(user_id: int) -> Any:
+    query = """SELECT * FROM "DiaryEntry" WHERE "UserID" = '%s';"""
+    return execute_query_ret_result(query, (user_id,))
