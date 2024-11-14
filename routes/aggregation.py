@@ -10,7 +10,7 @@ bp = Blueprint("aggregate", __name__)
 
 @bp.route("/report/total_users", methods=["GET"])
 def total_users_reports():
-    query = 'SELECT COUNT(*) AS total_users FROM "Users";'
+    query = 'SELECT COUNT(*) AS total_users FROM "User";'
     result = execute_query(query, fetch_one=True)
     return jsonify(result)
 
@@ -129,9 +129,9 @@ def users_with_most_entries_report():
     query = """
     SELECT u."UserID", u."Username", COUNT(d."EntryID") AS total_entries
     FROM "User" u
-    LEFT JOIN "DiaryEntry" d ON u."UserID" = d."UserID"
+    INNER JOIN "DiaryEntry" d ON u."UserID" = d."UserID"
     GROUP BY u."UserID", u."Username"
-    ORDER BY total_entries DESC
+    ORDER BY total_entries DESC;
     """
     result = execute_query(query)
     return jsonify(result)
@@ -146,8 +146,9 @@ def users_with_most_entries_report():
 def user_count_by_visibility_report():
     query = """
     SELECT "Visibility", COUNT(DISTINCT "UserID") AS user_count
-    FROM "DiaryEntry"
+    FROM "User"
     GROUP BY "Visibility";
     """
     result = execute_query(query)
+    print(result)
     return jsonify(result)

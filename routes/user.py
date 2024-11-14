@@ -66,8 +66,7 @@ def get_user_friend(user_id, friend_user_id) -> Any:
 def get_user_friends(user_id) -> Any:
     print(f"UserID from URL: {user_id}")
 
-    query = f'SELECT u."UserID", u."Username" FROM "User" u JOIN "UserFriends" uf ON u."UserID" = uf."FriendUserID" WHERE uf."UserID" = {
-        user_id};'
+    query = f'SELECT u."UserID", u."Username" FROM "User" u JOIN "UserFriends" uf ON u."UserID" = uf."FriendUserID" WHERE uf."UserID" = {user_id};'
     friends = execute_query(query)
     print(friends)
     return friends
