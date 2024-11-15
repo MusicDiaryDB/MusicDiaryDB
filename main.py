@@ -16,6 +16,7 @@ from routes.platformsongs import bp as platform_song_routes
 from routes.aggregation import bp as aggregation_routes
 
 app = Flask(__name__)
+app.secret_key = 'Hamouda'
 CORS(app)
 
 #

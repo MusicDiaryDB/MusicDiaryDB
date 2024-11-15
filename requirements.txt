@@ -3,3 +3,5 @@ Flask
 faker
 pandas
 flask-cors
+werkzeug # Password Hashing
+flask-session # Allows the user to remain logged in
