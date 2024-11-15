@@ -1,7 +1,8 @@
-from typing import Tuple
+from functools import wraps
+from typing import Tuple, Union
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from flask import request, jsonify, Response
+from flask import request, jsonify, Response, session
 
 
 def create_connection():
@@ -87,6 +88,42 @@ def create_resource(table, params, primary_key):
     else:
         return True
 
+def create_user_resource(table, params):
+    try:
+        keys = ", ".join([f'"{format_column_name(key)}"' for key in params.keys()])
+        values = ", ".join(["%s" for _ in params.keys()])
+        insert_query = f'INSERT INTO "{table}" ({keys}) VALUES ({values})'
+
+        result = execute_query(insert_query, tuple(params.values()))
+        if result is not None:
+            return {"message": "User created successfully"}, 201
+        else:
+            return {"error": "User creation failed"}, 500
+    except psycopg2.errors.UniqueViolation as e:
+        return {"error": "Username already exists"}, 409
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+#Helper function to restrict users from accessing admin controls/Checking for admin
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Check if the user is logged in
+        if 'user_id' not in session:
+            return jsonify({"error": "Authentication required"}), 401
+
+        # Retrieve user_id from session
+        user_id = session.get('user_id')
+
+        # Retrieve the user from the database to verify if they are an admin
+        user = get_resource("User", user_id, "UserID")
+        if not user or not user.get('IsAdmin'):
+            return jsonify({"error": "Admin access is required"}), 403
+
+        # If the user is an admin, call the original function
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 def get_last_insert_id(table, primary_key):
     query = f'SELECT MAX("{primary_key}") AS id FROM "{table}"'
@@ -169,7 +206,7 @@ def get_resource_with_multiple_keys(table, primary_keys, identifiers):
 
 def handle_request(
     table, operation, required_fields, primary_key, identifier=None
-) -> Tuple[Response | None, int]:
+) -> Tuple[Union[Response, None], int]:
     print(
         f"Request received: {table}, {operation}, {required_fields}, {primary_key}, {identifier}"
     )
