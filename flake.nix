@@ -19,6 +19,8 @@
           python312Packages.flask
           python312Packages.flask-cors
           python312Packages.requests
+          python312Packages.werkzeug
+          python312Packages.flask-session
         ];
 
         shellHook = ''

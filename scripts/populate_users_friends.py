@@ -66,14 +66,13 @@ for user in users:
     response = requests.post(
         f"{BASE_URL}/user/",
         data={
-            "username": user["username"],  # Correct key
-            "visibility": user["visibility"],  # Correct key
-            "password": user["password"],  # Correct key
-            "isAdmin": str(
-                user["is_admin"]
-            ).lower(),  # Correct key, converted to 'true'/'false'
+            "username": user["username"],
+            "visibility": user["visibility"],
+            "password": user["password"],
+            "isAdmin": str(user["is_admin"]).lower(),
         },
     )
+    print("Adding user:", response)
     print(
         f"Adding user: {user['username']} - Status: {response.status_code}, Response: {response.json()}"
     )
