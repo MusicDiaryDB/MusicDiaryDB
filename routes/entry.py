@@ -44,3 +44,26 @@ def delete_diary_entry(entry_id: int) -> Any:
 def get_user_diary_entries(user_id: int) -> Any:
     query = """SELECT * FROM "DiaryEntry" WHERE "UserID" = '%s';"""
     return execute_query_ret_result(query, (user_id,))
+
+@bp.route("/entry/friends/<int:user_id>", methods=["GET"])
+def get_friends_diary_entries(user_id: int) -> Any:
+    # Query to get the friends of the user
+    friends_query = """SELECT "FriendID" FROM "UserFriends" WHERE "UserID" = '%s';"""
+    friends_result = execute_query_ret_result(friends_query, (user_id,))
+    
+    if not friends_result:
+        return {"message": "No friends found for this user."}, 404
+
+    # Extract the friend IDs from the result
+    friend_ids = [friend["FriendID"] for friend in friends_result]
+
+    # Query to get the diary entries of each friend, filtered by visibility (Public or Friends)
+    friends_entries_query = """
+    SELECT * FROM "DiaryEntry"
+    WHERE "UserID" = (%s)
+    AND "Visibility" IN ('Public', 'Friends');
+    """
+    formatted_friend_ids = ",".join([str(friend_id) for friend_id in friend_ids])
+    friends_entries_result = execute_query_ret_result(friends_entries_query % formatted_friend_ids, ())
+    print(friends_entries_result)
+    return friends_entries_result
