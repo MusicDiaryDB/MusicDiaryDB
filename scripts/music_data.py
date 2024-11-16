@@ -46,7 +46,7 @@ data = {
     "Minova": {"Stranger": ["Stranger"]},
     "Abby Holliday": {"CRACK A SMILE COME ON STAY A WHILE": ["The Price"]},
     "Charli XCX": {"Brat": ["Club Classics"]},
-    "Porter Robinson": {"SILE! :D": ["Cheerleader"]},
+    "Porter Robinson": {"SMILE! :D": ["Cheerleader"]},
     "Clean Spill": {"Note to Self": ["Note to Self"]},
     "The Backseat Lovers": {"Out of Tune": ["Out of Tune"]},
     "Rubblebucket": {"Rubblebucket": ["Bikes"]},

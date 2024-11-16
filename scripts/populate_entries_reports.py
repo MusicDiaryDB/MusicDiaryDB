@@ -27,6 +27,7 @@ for artist, albums in data.items():
                 }
             )
             entry_counter += 1
+            entry_counter %= 29
 
 # Generate Diary Reports
 diary_reports = []
