@@ -57,3 +57,21 @@ def get_user_friends_public_reviews(user_id) -> Any:
     friends_reviews = execute_query(query, (user_id,))
     print(friends_reviews)
     return friends_reviews
+
+
+@bp.route("/review/song/<int:review_id>", methods=["GET"])
+def get_review_song(review_id) -> Any:
+    query = """
+    SELECT
+        s."Name" AS "SongName",
+        a."Name" AS "AlbumName",
+        ar."Name" AS "ArtistName",
+        r."Visibility",
+        r."Contents"
+    FROM "Review" r
+    JOIN "Song" s ON r."SongID" = s."SongID"
+    JOIN "Album" a ON s."AlbumID" = a."AlbumID"
+    JOIN "Artist" ar ON a."ArtistID" = ar."ArtistID"
+    WHERE r."ReviewID" = %s;
+    """
+    return execute_query_ret_result(query, (review_id,))
