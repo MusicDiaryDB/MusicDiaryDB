@@ -46,6 +46,27 @@ def get_user_diary_reports(user_id: int) -> Any:
     query = """SELECT * FROM "DiaryReport" WHERE "UserID" = '%s';"""
     return execute_query_ret_result(query, (user_id,))
 
+@bp.route("/report/friends/<int:user_id>", methods=["GET"])
+def get_friends_diary_reports(user_id: int) -> Any:
+    # Fetch the user's friends from UserFriends table
+    query = """SELECT "FriendUserID" FROM "UserFriends" WHERE "UserID" = %s"""
+    friends = execute_query_ret_result(query, (user_id,))
+    
+    # If no friends, return empty list
+    if not friends:
+        return {"message": "No friends found."}, 404
+    
+    # Fetch diary reports for each friend
+    friend_reports = {}
+    for friend in friends:
+        friend_id = friend["FriendUserID"]
+        report_query = """SELECT * FROM "DiaryReport" WHERE "UserID" = %s"""
+        reports = execute_query_ret_result(report_query, (friend_id,))
+        friend_reports[friend_id] = reports
+    
+    return friend_reports
+
+
 
 # ============================
 #    REPORT ENTRIES ROUTES
