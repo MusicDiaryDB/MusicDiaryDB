@@ -86,6 +86,12 @@ def get_report_song_names(report_id) -> Any:
     return execute_query_ret_result(query, (report_id,))
 
 
+@bp.route("/reports/all", methods=["GET"])
+def get_all_reports() -> Any:
+    query = """SELECT * FROM "DiaryReport";"""
+    return execute_query_ret_result(query)
+
+
 # ============================
 #    REPORT ENTRIES ROUTES
 # ============================

@@ -43,6 +43,12 @@ def get_user_reviews(user_id: int) -> Any:
     return execute_query_ret_result(query, (user_id,))
 
 
+@bp.route("/reviews/all", methods=["GET"])
+def get_all_reviews() -> Any:
+    query = """SELECT * FROM "Review";"""
+    return execute_query_ret_result(query)
+
+
 @bp.route("/user_reviews/<int:user_id>", methods=["GET"])
 def get_user_friends_public_reviews(user_id) -> Any:
     query = """
