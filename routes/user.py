@@ -31,7 +31,6 @@ def create_user() -> Any:
     password = user_data.get("password")
     visibility = user_data.get("visibility")
     is_admin = user_data.get("isAdmin", False)
-    print("wow")
 
     # Validate required fields
     missing_fields = []
@@ -202,9 +201,7 @@ def get_user_friends(user_id) -> Any:
     print(f"UserID from URL: {user_id}")
 
     query = f'SELECT u."UserID", u."Username" FROM "User" u JOIN "UserFriends" uf ON u."UserID" = uf."FriendUserID" WHERE uf."UserID" = {user_id};'
-    friends = execute_query(query)
-    print(friends)
-    return friends
+    return execute_query(query)
 
 
 @bp.route("/user_friend/<int:user_id>/<int:friend_user_id>", methods=["DELETE"])

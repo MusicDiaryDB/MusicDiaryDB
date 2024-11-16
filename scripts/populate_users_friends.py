@@ -72,7 +72,6 @@ for user in users:
             "isAdmin": str(user["is_admin"]).lower(),
         },
     )
-    print("Adding user:", response)
     print(
         f"Adding user: {user['username']} - Status: {response.status_code}, Response: {response.json()}"
     )
