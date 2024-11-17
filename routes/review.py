@@ -81,3 +81,26 @@ def get_review_song(review_id) -> Any:
     WHERE r."ReviewID" = %s;
     """
     return execute_query_ret_result(query, (review_id,))
+
+
+@bp.route("/review/friends/<int:user_id>")
+def get_friend_reviews(user_id) -> Any:
+    query = """
+    SELECT DISTINCT
+        u."Username" AS FriendUsername,
+        r."Contents" AS Contents,
+        s."Name" AS SongName,
+        r."ReviewID" as ReviewID
+    FROM
+        "UserFriends" uf
+    INNER JOIN "User" u
+        ON uf."FriendUserID" = u."UserID"
+    INNER JOIN "Review" r
+        ON u."UserID" = r."UserID"
+    INNER JOIN "Song" s
+        ON r."SongID" = s."SongID"
+    WHERE
+        uf."UserID" = %s
+        AND (r."Visibility" = 'public' OR r."Visibility" = 'friend');
+    """
+    return execute_query_ret_result(query, (user_id,))
