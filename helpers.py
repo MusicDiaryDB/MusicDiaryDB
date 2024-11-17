@@ -94,15 +94,19 @@ def create_user_resource(table, params):
         values = ", ".join(["%s" for _ in params.keys()])
         insert_query = f'INSERT INTO "{table}" ({keys}) VALUES ({values})'
 
+        # Execute the insertion
         result = execute_query(insert_query, tuple(params.values()))
-        if result is not None:
-            return {"message": "User created successfully"}, 201
-        else:
-            return {"error": "User creation failed"}, 500
+        
+        # Assuming execute_query doesn't throw an error, the user is created successfully.
+        return {"message": "User created successfully"}, 201
+
     except psycopg2.errors.UniqueViolation as e:
+        # Handle unique constraint error for username
         return {"error": "Username already exists"}, 409
     except Exception as e:
-        return {"error": str(e)}, 500
+        # Handle generic errors and provide more context in logs for debugging
+        print(f"Error during user creation: {e}")
+        return {"error": "User creation failed due to server error"}, 500
 
 #Helper function to restrict users from accessing admin controls/Checking for admin
 def admin_required(f):
