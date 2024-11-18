@@ -43,6 +43,12 @@ def get_user_reviews(user_id: int) -> Any:
     return execute_query_ret_result(query, (user_id,))
 
 
+@bp.route("/reviews/all", methods=["GET"])
+def get_all_reviews() -> Any:
+    query = """SELECT * FROM "Review";"""
+    return execute_query_ret_result(query)
+
+
 @bp.route("/user_reviews/<int:user_id>", methods=["GET"])
 def get_user_friends_public_reviews(user_id) -> Any:
     query = """
@@ -57,3 +63,44 @@ def get_user_friends_public_reviews(user_id) -> Any:
     friends_reviews = execute_query(query, (user_id,))
     print(friends_reviews)
     return friends_reviews
+
+
+@bp.route("/review/song/<int:review_id>", methods=["GET"])
+def get_review_song(review_id) -> Any:
+    query = """
+    SELECT
+        s."Name" AS "SongName",
+        a."Name" AS "AlbumName",
+        ar."Name" AS "ArtistName",
+        r."Visibility",
+        r."Contents"
+    FROM "Review" r
+    JOIN "Song" s ON r."SongID" = s."SongID"
+    JOIN "Album" a ON s."AlbumID" = a."AlbumID"
+    JOIN "Artist" ar ON a."ArtistID" = ar."ArtistID"
+    WHERE r."ReviewID" = %s;
+    """
+    return execute_query_ret_result(query, (review_id,))
+
+
+@bp.route("/review/friends/<int:user_id>")
+def get_friend_reviews(user_id) -> Any:
+    query = """
+    SELECT DISTINCT
+        u."Username" AS FriendUsername,
+        r."Contents" AS Contents,
+        s."Name" AS SongName,
+        r."ReviewID" as ReviewID
+    FROM
+        "UserFriends" uf
+    INNER JOIN "User" u
+        ON uf."FriendUserID" = u."UserID"
+    INNER JOIN "Review" r
+        ON u."UserID" = r."UserID"
+    INNER JOIN "Song" s
+        ON r."SongID" = s."SongID"
+    WHERE
+        uf."UserID" = %s
+        AND (r."Visibility" = 'public' OR r."Visibility" = 'friend');
+    """
+    return execute_query_ret_result(query, (user_id,))

@@ -75,13 +75,21 @@ def get_friends_diary_reports(user_id: int) -> Any:
 @bp.route("/report/songs/<int:report_id>", methods=["GET"])
 def get_report_song_names(report_id) -> Any:
     query = """
-    SELECT DISTINCT s."Name", de.*
+    SELECT DISTINCT s."Name" AS "SongName", a."Name" AS "AlbumName", ar."Name" AS "ArtistName", de.*
     FROM "Song" s
+    JOIN "Album" a ON s."AlbumID" = a."AlbumID"
+    JOIN "Artist" ar ON a."ArtistID" = ar."ArtistID"
     JOIN "DiaryEntry" de ON s."SongID" = de."SongID"
     JOIN "ReportEntries" re ON de."EntryID" = re."EntryID"
     WHERE re."ReportID" = %s;
     """
     return execute_query_ret_result(query, (report_id,))
+
+
+@bp.route("/reports/all", methods=["GET"])
+def get_all_reports() -> Any:
+    query = """SELECT * FROM "DiaryReport";"""
+    return execute_query_ret_result(query)
 
 
 # ============================

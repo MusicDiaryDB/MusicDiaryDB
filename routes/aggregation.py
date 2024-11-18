@@ -137,6 +137,54 @@ def users_with_most_entries_report():
     return jsonify(result)
 
 
+@bp.route("/report/min_entries_per_report/<int:user_id>", methods=["GET"])
+def min_entries_per_report(user_id):
+    query = """
+    SELECT MIN(entry_count) AS min_entries
+    FROM (
+        SELECT COUNT(re."EntryID") AS entry_count
+        FROM "ReportEntries" re
+        INNER JOIN "DiaryReport" dr ON re."ReportID" = dr."ReportID"
+        WHERE dr."UserID" = %s
+        GROUP BY re."ReportID"
+    ) AS entry_counts;
+    """
+    result = execute_query(query, (user_id,), fetch_one=True)
+    return jsonify(result)
+
+
+@bp.route("/report/max_entries_per_report/<int:user_id>", methods=["GET"])
+def max_entries_per_report(user_id):
+    query = """
+    SELECT MAX(entry_count) AS max_entries
+    FROM (
+        SELECT COUNT(re."EntryID") AS entry_count
+        FROM "ReportEntries" re
+        INNER JOIN "DiaryReport" dr ON re."ReportID" = dr."ReportID"
+        WHERE dr."UserID" = %s
+        GROUP BY re."ReportID"
+    ) AS entry_counts;
+    """
+    result = execute_query(query, (user_id,), fetch_one=True)
+    return jsonify(result)
+
+
+@bp.route("/report/avg_entries_per_report/<int:user_id>", methods=["GET"])
+def avg_entries_per_report(user_id):
+    query = """
+    SELECT AVG(entry_count) AS avg_entries
+    FROM (
+        SELECT COUNT(re."EntryID") AS entry_count
+        FROM "ReportEntries" re
+        INNER JOIN "DiaryReport" dr ON re."ReportID" = dr."ReportID"
+        WHERE dr."UserID" = %s
+        GROUP BY re."ReportID"
+    ) AS entry_counts;
+    """
+    result = execute_query(query, (user_id,), fetch_one=True)
+    return jsonify(result)
+
+
 # ============================
 #  GRAPH FUNCTIONALITY ROUTES
 # ============================

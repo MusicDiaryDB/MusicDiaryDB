@@ -14,9 +14,10 @@ from routes.entry import bp as entry_routes
 from routes.platform import bp as platform_routes
 from routes.platformsongs import bp as platform_song_routes
 from routes.aggregation import bp as aggregation_routes
+from routes.music import bp as music_routes
 
 app = Flask(__name__)
-app.secret_key = 'Hamouda'
+app.secret_key = "Hamouda"
 CORS(app)
 
 #
@@ -33,6 +34,7 @@ app.register_blueprint(entry_routes)
 app.register_blueprint(platform_routes)
 app.register_blueprint(platform_song_routes)
 app.register_blueprint(aggregation_routes)
+app.register_blueprint(music_routes)
 
 
 #

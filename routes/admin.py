@@ -33,19 +33,6 @@ def remove_user_admin(username):
     return execute_query_ret_result(query, (username,))
 
 
-# ============================
-#   ADMIN REPORT AGGREGATION
-# ============================
-
-
-# Generate a managerial report about database-wide information
-@bp.route("/admin/report", methods=["GET"])
-def generate_managerial_report():
-    # TODO: aggregation queries?
-    print(request)
-    return {}
-
-
 # ======================
 #     DB HEALTH/INFO
 # ======================
@@ -77,6 +64,7 @@ def get_db_info() -> Any:
 @bp.route("/admin/info/dbsize", methods=["GET"])
 def get_db_size() -> Any:
     print(request)
+    execute_query("ANALYZE;")
     query = (
         "SELECT pg_size_pretty(pg_database_size(current_database())) AS database_size;"
     )
@@ -86,6 +74,7 @@ def get_db_size() -> Any:
 @bp.route("/admin/info/tablesize", methods=["GET"])
 def get_table_sizes():
     print(request)
+    execute_query("ANALYZE;")
     query = """
     SELECT
         schemaname AS schema,
@@ -102,6 +91,7 @@ def get_table_sizes():
 @bp.route("/admin/info/conns", methods=["GET"])
 def get_info_num_conns():
     print(request)
+    execute_query("ANALYZE;")
     query = """
     SELECT
         count(*) AS total_connections
@@ -114,6 +104,7 @@ def get_info_num_conns():
 @bp.route("/admin/info/conns-activity", methods=["GET"])
 def get_info_conns_activity():
     print(request)
+    execute_query("ANALYZE;")
     query = """
     SELECT
         state,
@@ -134,6 +125,7 @@ def get_info_conns_activity():
 @bp.route("/admin/perf/cache-hit-ratio", methods=["GET"])
 def get_perf_cache_hit_ratios():
     print(request)
+    # execute_query("ANALYZE;")
     query = "SELECT sum(blks_hit) / (sum(blks_hit) + sum(blks_read)) AS cache_hit_ratio FROM pg_stat_database;"
     return execute_query_ret_result(query)
 
@@ -141,6 +133,7 @@ def get_perf_cache_hit_ratios():
 @bp.route("/admin/perf/long-running-queries", methods=["GET"])
 def get_perf_long_running_queries():
     print(request)
+    # execute_query("ANALYZE;")
     query = """
     SELECT
         pid,

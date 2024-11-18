@@ -9,8 +9,12 @@ docker compose up
 # if the first command doesn't work, you have a different version of docker compose (use this instead):
 docker-compose up
 
-# Create tables
 # (initialize venv if necessary)
+
+# Create tables (and populate them)
+python ./scripts/setup.py
+# alternatively, if pre-populated data is not desired...
+# Create tables (without populating them)
 python ./scripts/create_tables.py
 ```
 

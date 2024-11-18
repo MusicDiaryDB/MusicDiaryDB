@@ -213,3 +213,44 @@ def delete_user_friend(user_id, friend_user_id) -> Any:
     return delete_resource_with_multiple_keys(
         "UserFriends", ["UserID", "FriendUserID"], (user_id, friend_user_id)
     )
+
+@bp.route("/<int:user_id>/add_friend", methods=["POST"])
+def add_friend(user_id):
+    # This ended up being wack, sorry
+    user_query = f'SELECT "UserID" FROM "User" WHERE "UserID" = %s'
+    user_exists = execute_query(user_query, (user_id,))
+    if not user_exists:
+        return jsonify({"error": "User not found"}), 404
+
+    # Extract request data
+    data = request.json
+    friend_username = data.get("friendUsername")
+    if not friend_username:
+        return jsonify({"error": "Missing friend username"}), 400
+
+    # Get friend's UserID
+    friend_query = f'SELECT "UserID" FROM "User" WHERE "Username" = %s'
+    friend_result = execute_query(friend_query, (friend_username,))
+    if not friend_result:
+        return jsonify({"error": "Friend not found"}), 404
+
+    friend_id = friend_result[0]["UserID"]
+
+    # Prevent duplicate entries
+    check_existing_query = '''
+        SELECT * FROM "UserFriends"
+        WHERE ("UserID" = %s AND "FriendUserID" = %s)
+           OR ("UserID" = %s AND "FriendUserID" = %s)
+    '''
+    existing_result = execute_query(check_existing_query, (user_id, friend_id, friend_id, user_id))
+    if existing_result:
+        return jsonify({"error": "Friendship already exists"}), 409
+
+    # Add friendship in both directions
+    insert_query = '''
+        INSERT INTO "UserFriends" ("UserID", "FriendUserID")
+        VALUES (%s, %s), (%s, %s)
+    '''
+    execute_query(insert_query, (user_id, friend_id, friend_id, user_id))
+
+    return jsonify({"message": "Friend added successfully"}), 200
