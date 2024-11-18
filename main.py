@@ -1,6 +1,7 @@
 from typing import Any
 from flask import Flask, render_template
 from flask_cors import CORS
+from flask_session import Session
 
 # import routes defined in other files
 from routes.admin import bp as admin_routes
@@ -18,7 +19,16 @@ from routes.music import bp as music_routes
 
 app = Flask(__name__)
 app.secret_key = "Hamouda"
-CORS(app)
+CORS(app, supports_credentials=True)
+
+#
+# configure Flask-Session for server-side sessions
+#
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_FILE_DIR"] = "./.flask_session/" 
+app.config["SESSION_USE_SIGNER"] = True
+Session(app)
 
 #
 # register endpoints defind in other files

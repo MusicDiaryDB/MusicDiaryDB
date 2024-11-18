@@ -102,15 +102,15 @@ def login_user() -> Any:
 }), 200
 
 
-@bp.route("/user/update-password", methods=["PUT"])
-def update_password() -> Any:
-    # Extract the logged-in user information from the session
+@bp.route("/user/<int:user_id>/update-password", methods=["PUT"])
+def update_password(user_id: int) -> Any:
+    # Check if user is authenticated
     if "user_id" not in session:
         return jsonify({"error": "Authentication required"}), 401
 
-    user_id = session["user_id"]
+    if session["user_id"] != user_id:
+        return jsonify({"error": "Unauthorized user"}), 403
 
-    # Extracting old and new passwords first
     user_data = request.form
     if not user_data:
         return jsonify({"error": "Invalid JSON data"}), 400
@@ -119,23 +119,20 @@ def update_password() -> Any:
     new_password = user_data.get("new_password")
 
     # Checking for Missing Fields
-    missing_fields = []
-    if not old_password:
-        missing_fields.append("old_password")
-    if not new_password:
-        missing_fields.append("new_password")
+    if not old_password or not new_password:
+        return jsonify({"error": "Both old and new passwords are required"}), 400
 
-    if missing_fields:
-        return jsonify({"error": f'Missing fields: {", ".join(missing_fields)}'}), 400
-
+    # Retrieving the current user from the database
     retrieved_user = get_resource("User", user_id, "UserID")
     if not retrieved_user:
         return jsonify({"error": "User not found."}), 404
 
+    # Verifying old password
     stored_password_hash = retrieved_user.get("Password")
     if not check_password_hash(stored_password_hash, old_password):
         return jsonify({"error": "Incorrect old password"}), 401
 
+    # Hashing the new password and updating
     hashed_new_password = generate_password_hash(new_password, method="pbkdf2:sha256")
     update_data = {"password": hashed_new_password}
     update_result = update_resource("User", update_data, user_id, "UserID")
@@ -144,6 +141,9 @@ def update_password() -> Any:
         return jsonify({"message": "Password updated successfully"}), 200
     else:
         return jsonify({"error": "Failed to update password"}), 500
+
+
+
 
 
 @bp.route("/logout", methods=["POST"])
