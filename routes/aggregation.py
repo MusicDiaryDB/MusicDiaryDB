@@ -15,11 +15,15 @@ def total_users_reports():
     return jsonify(result)
 
 
-@bp.route("/report/avg_visibility_entries", methods=["GET"])
-def avg_visability_entries_report():
+@bp.route("/report/avg_num_entries", methods=["GET"])
+def avg_num_entries_report():
     query = """
-    SELECT AVG(CASE WHEN \"Visibility\" = 'public' THEN 1 ELSE 0 END) AS avg_public_entries
-    FROM \"DiaryEntry\";
+    SELECT AVG(entry_count) AS avg_entries_per_user
+    FROM (
+        SELECT COUNT(*) AS entry_count
+        FROM "DiaryEntry"
+        GROUP BY "UserID"
+    ) AS user_entries;
     """
     result = execute_query(query, fetch_one=True)
     return jsonify(result)
@@ -182,6 +186,21 @@ def avg_entries_per_report(user_id):
     ) AS entry_counts;
     """
     result = execute_query(query, (user_id,), fetch_one=True)
+    return jsonify(result)
+
+@bp.route("/report/total_entries_and_reports/<int:user_id>", methods=["GET"])
+def total_entries_and_reports(user_id):
+    query = """
+    SELECT 
+        SUM(CASE WHEN "UserID" = %s THEN 1 ELSE 0 END) AS total_entries_reports
+    FROM (
+        SELECT "UserID" FROM "DiaryEntry"
+        UNION ALL
+        SELECT "UserID" FROM "DiaryReport"
+    ) AS combined_entries_reports
+    WHERE "UserID" = %s;
+    """
+    result = execute_query(query, (user_id, user_id), fetch_one=True)
     return jsonify(result)
 
 
