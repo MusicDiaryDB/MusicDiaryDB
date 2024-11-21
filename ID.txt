@@ -1,0 +1,9 @@
+Project:
+- MusicDiaryDB
+
+Team Members:
+- Patrick Dewey (ptdewey)
+- Benjamin Zeitlin (dmbjm)
+- Biritwum-Nyarko Kwasi Manu (kwasimbnyarko)
+- Rodney Okyere (prismatiiic)
+

@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-WHITELIST=("py" "js" "html" "sql" "ts" "tsx" "jsx")
+WHITELIST=("py" "js" "html" "ts" "tsx" "jsx")
 
 declare -A user_loc
 temp_file=$(mktemp)
 
 for ext in "${WHITELIST[@]}"; do
-    find . -type f -name "*.$ext" -not -path "*/node_modules/*" | while read -r file; do
+    find . -type f -name "*.$ext" -not -path "*/node_modules/*" -not -path "./schema.sql" -not -path "./scripts/populate*.py" | while read -r file; do
         git blame --line-porcelain "$file" 2>/dev/null | \
             awk '/^author / {authors[$2]++} END {for (a in authors) print a, authors[a]}' >> "$temp_file"
     done
